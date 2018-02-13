@@ -1,5 +1,5 @@
 LAB=3
-PART=4
+PART=5
 
 COMMONDIR=common/
 LABDIR=$(LAB)/

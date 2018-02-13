@@ -137,16 +137,16 @@ void display(void)
 	shaderUpload(pTexture, &mvp, NULL, 0, -1);
 	DrawModel(skybox, pTexture, "inVertex", NULL, "inTexCoord");
 	glEnable(GL_DEPTH_TEST);
-	/* Ground */
-	mat4 transform = S(100, 0.01, 100);
-	mvp = mult3(project, view, transform);
-	shaderUpload(pTexture, &mvp, NULL, 1, -1);
-	DrawModel(cube, pTexture, "inVertex", NULL, "inTexCoord");
 	/* -------------------- *
 	 * Phong texture shader *
 	 * -------------------- */
 	glUseProgram(pPhongTexture);
 	glUniform3fv(glGetUniformLocation(pPhongTexture, "cameraPosition"), 1, &camera.pos.x);
+	/* Ground */
+	mat4 transform = S(100, 0.01, 100);
+	mvp = mult3(project, view, transform);
+	shaderUpload(pPhongTexture, &mvp, &transform, 1, 2500);
+	DrawModel(cube, pPhongTexture, "inVertex", "inNormal", "inTexCoord");
 	/* Car */
 	float radius = 20;
 	float speed = 0.0015;
