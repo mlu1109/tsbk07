@@ -11,3 +11,9 @@ void shaderUpload(GLuint program, mat4 *mvp, mat4 *transform, GLuint texUnit, GL
     if (specularExponent != -1)
         glUniform1f(glGetUniformLocation(program, "specularExponent"), specularExponent);
 }
+
+void shaderUpload2Textures(GLuint program, mat4 *mvp, mat4 *transform, GLuint texUnit, GLuint texUnit2, GLfloat specularExponent)
+{
+    glUniform1i(glGetUniformLocation(program, "texUnit2"), texUnit2);
+    shaderUpload(program, mvp, transform, texUnit, specularExponent);
+}
