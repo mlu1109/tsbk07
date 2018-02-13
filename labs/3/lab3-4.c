@@ -30,6 +30,7 @@ struct WindMill
 Model *skybox;
 Model *cube;
 Model *car;
+Model *bunny;
 
 void initShaders(void)
 {
@@ -75,6 +76,7 @@ void initModels(void)
 	skybox = LoadModelPlus("models/skybox.obj");
 	cube = LoadModelPlus("models/cubeplus.obj");
 	car = LoadModelPlus("models/bilskiss.obj");
+	bunny = LoadModelPlus("models/bunnyplus.obj");
 	/* Init textures */
 	GLuint skyboxTexture;
 	GLuint carTexture;
@@ -206,6 +208,22 @@ void display(void)
 	mvp = mult3(project, view, transform);
 	shaderUpload(pPhongColor, &mvp, &transform, -1, 10);
 	DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
+	/* Bunnies */
+	transform = S(5, 5, 5);
+	mat4 bunnyTranslation[4] = {
+		T(30, 3, 0),
+		T(-30, 3, 0),
+		T(0, 3, -30),
+		T(0, 3, 30)
+	};
+	for (int i = 0; i < 4; ++i)
+	{
+		mat4 transform_i = mult2(bunnyTranslation[i], transform);
+		mvp = mult3(project, view, transform_i);
+		shaderUpload(pPhongColor, &mvp, &transform_i, -1, 125);
+		DrawModel(bunny, pPhongColor, "inVertex", "inNormal", "inTexCoord");
+	}
+	/* Done */
 	printError("draw models");
 	//glFinish();
 	glutSwapBuffers();
