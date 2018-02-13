@@ -16,7 +16,7 @@
 GLuint pPhongColor;
 GLuint pTexture;
 GLuint pPhongTexture;
-GLuint pPhongMultyTexture;
+GLuint pPhongMultiTexture;
 
 mat4 project;
 
@@ -37,7 +37,7 @@ void initShaders(void)
 	pPhongColor = loadShaders("3/phong.vert", "3/phong.frag");
 	pTexture = loadShaders("3/texture.vert", "3/texture.frag");
 	pPhongTexture = loadShaders("3/phong-texture.vert", "3/phong-texture.frag");
-	pPhongMultyTexture = loadShaders("3/phong-multy-texture.vert", "3/phong-multy-texture.frag");
+	pPhongMultiTexture = loadShaders("3/phong-multi-texture.vert", "3/phong-multi-texture.frag");
 
 	/* Light */
 	GLint isDirectional[] = {false, false, true, true};
@@ -61,11 +61,11 @@ void initShaders(void)
 	glUniform3fv(glGetUniformLocation(pPhongTexture, "lightPosition"), 4, lightPosition);
 	glUniform3fv(glGetUniformLocation(pPhongTexture, "lightColor"), 4, lightColor);
 	glUniform1iv(glGetUniformLocation(pPhongTexture, "isDirectional"), 4, isDirectional);
-	// pPhongMultyTexture
-	glUseProgram(pPhongMultyTexture);
-	glUniform3fv(glGetUniformLocation(pPhongMultyTexture, "lightPosition"), 4, lightPosition);
-	glUniform3fv(glGetUniformLocation(pPhongMultyTexture, "lightColor"), 4, lightColor);
-	glUniform1iv(glGetUniformLocation(pPhongMultyTexture, "isDirectional"), 4, isDirectional);
+	// pPhongMultiTexture
+	glUseProgram(pPhongMultiTexture);
+	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightPosition"), 4, lightPosition);
+	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightColor"), 4, lightColor);
+	glUniform1iv(glGetUniformLocation(pPhongMultiTexture, "isDirectional"), 4, isDirectional);
 	// pPhongColor
 	glUseProgram(pPhongColor);
 	glUniform3fv(glGetUniformLocation(pPhongColor, "lightPosition"), 4, lightPosition);
@@ -162,15 +162,15 @@ void display(void)
 	DrawModel(skybox, pTexture, "inVertex", NULL, "inTexCoord");
 	glEnable(GL_DEPTH_TEST);
 	/* -------------------------- *
-	 * Phong multy texture shader *
+	 * Phong multi texture shader *
 	 * ---------------------------*/
-	glUseProgram(pPhongMultyTexture);
-	glUniform3fv(glGetUniformLocation(pPhongMultyTexture, "cameraPosition"), 1, &camera.pos.x);
+	glUseProgram(pPhongMultiTexture);
+	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "cameraPosition"), 1, &camera.pos.x);
 	/* Ground */
 	mat4 transform = S(100, 0.01, 100);
 	mvp = mult3(project, view, transform);
-	shaderUpload2Textures(pPhongMultyTexture, &mvp, &transform, 1, 3, 2500);
-	DrawModel(cube, pPhongMultyTexture, "inVertex", "inNormal", "inTexCoord");
+	shaderUpload2Textures(pPhongMultiTexture, &mvp, &transform, 1, 3, 2500);
+	DrawModel(cube, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
 	/* Car */
 	float radius = 20;
 	float speed = 0.0015;
@@ -181,8 +181,8 @@ void display(void)
 		Ry(-speed * t),
 		S(4, 4, 4));
 	mvp = mult3(project, view, transform);
-	shaderUpload2Textures(pPhongMultyTexture, &mvp, &transform, 2, 3, 250);
-	DrawModel(car, pPhongMultyTexture, "inVertex", "inNormal", "inTexCoord");
+	shaderUpload2Textures(pPhongMultiTexture, &mvp, &transform, 2, 3, 250);
+	DrawModel(car, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
 	/* -------------------- *
 	 * Phong texture shader *
 	 * -------------------- */
