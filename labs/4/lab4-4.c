@@ -19,18 +19,88 @@
 const int quadPixelWidth = 1;
 const int quadPixelHeight = 1;
 
-mat4 projectionMatrix;
-// Keyboard translation for model
-mat4 keyboardTranslation;
-// vertex array object
-Model *m, *m2, *tm;
+const float k_a = 0.1;
+const float k_s = 0.8;
+const float k_d = 0.6;
+
+const char *terrainTexturePath = "textures/rutor.tga";
+const char *terrainHeightMapPath = "textures/fft-terrain.tga";
+
+// Objects/Models
+Model *terrain;
 Object groundSphere;
 Object octagon;
-// Reference to shader program
-GLuint program;
+
+// Shaders
+GLuint pTerrain;
 GLuint pPhong;
-GLuint tex1, tex2;
-TextureData ttex; // terrain
+
+// HeightMap
+TextureData ttex; 
+
+void initShaders(void)
+{
+	pPhong = loadShaders("4/phong.vert", "4/phong.frag");
+	pTerrain = loadShaders("4/terrain.vert", "4/terrain.frag");
+	//pPhongTexture = loadShaders("3/phong-texture.vert", "3/phong-texture.frag");
+	//pPhongMultiTexture = loadShaders("3/phong-multi-texture.vert", "3/phong-multi-texture.frag");
+
+	/* Light */
+	GLint isDirectional[] = {false, false, false, true};
+	GLfloat lightPosition[] = {
+		10.0f, 5.0f, 0.0f, // 1
+		0.0f, 5.0f, 10.0f, // 2
+		-1.0f, 0.0f, 0.0f, // 3
+		1.0f, 1.0f, 1.0f  // 4
+	};
+	GLfloat lightColor[] = {
+		//0.0f, 0.0f, 0.0f,
+		//0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, // 1: Red
+		0.0f, 0.0f, 0.0f, // 2: Green
+		0.0f, 0.0f, 0.0f, // 3: Blue
+		1.0f, 1.0f, 1.0f  // 4: White
+	};
+
+	/* Projection */
+	mat4 project = frustum(
+		-0.1f, // Left
+		0.1f,  // Right
+		-0.1f, // Bottom
+		0.1f,  // Top
+		0.2f,  // Near
+		300.0f // Far
+	);
+
+	/* Shaders */
+	// pTerrain
+	glUseProgram(pTerrain);
+	glUniform3fv(glGetUniformLocation(pTerrain, "lightPosition"), 4, lightPosition);
+	glUniform3fv(glGetUniformLocation(pTerrain, "lightColor"), 4, lightColor);
+	glUniform1iv(glGetUniformLocation(pTerrain, "isDirectional"), 4, isDirectional);
+	glUniformMatrix4fv(glGetUniformLocation(pTerrain, "project"), 1, GL_TRUE, project.m);
+	glUniform1f(glGetUniformLocation(pTerrain, "k_a"), k_a);
+	glUniform1f(glGetUniformLocation(pTerrain, "k_d"), k_d);
+	glUniform1f(glGetUniformLocation(pTerrain, "k_s"), k_s);
+	
+	GLuint terrainTexture;
+	LoadTGATextureSimple(terrainTexturePath, &terrainTexture);
+	glActiveTexture(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, terrainTexture);
+	glUniform1i(glGetUniformLocation(pTerrain, "texUnit"), 0);
+
+	// pPhong
+	glUseProgram(pPhong);
+	glUniform3fv(glGetUniformLocation(pPhong, "lightPosition"), 4, lightPosition);
+	glUniform3fv(glGetUniformLocation(pPhong, "lightColor"), 4, lightColor);
+	glUniform1iv(glGetUniformLocation(pPhong, "isDirectional"), 4, isDirectional);
+	glUniformMatrix4fv(glGetUniformLocation(pPhong, "project"), 1, GL_TRUE, project.m);
+	glUniform1f(glGetUniformLocation(pPhong, "k_a"), k_a);
+	glUniform1f(glGetUniformLocation(pPhong, "k_d"), k_d);
+	glUniform1f(glGetUniformLocation(pPhong, "k_s"), k_s);
+
+	printError("init shader");
+}
 
 void init(void)
 {
@@ -46,27 +116,11 @@ void init(void)
 	cameraInit(cam, lookAtPoint, up);
 	// Input
 	inputInit();
-
-	projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 300.0);
-
-	// Textures
-	LoadTGATextureSimple("textures/rutor.tga", &tex1);
-	// Shader "program"
-	program = loadShaders("4/terrain.vert", "4/terrain.frag");
-	glUseProgram(program);
-	glUniformMatrix4fv(glGetUniformLocation(program, "project"), 1, GL_TRUE, projectionMatrix.m);
-	glUniform1i(glGetUniformLocation(program, "tex"), 0); // Texture unit 0
-	printError("init shader program");
-
-	// Shader "pPhong"
-	pPhong = loadShaders("4/phong.vert", "4/phong.frag");
-	glUseProgram(pPhong);
-	glUniformMatrix4fv(glGetUniformLocation(pPhong, "project"), 1, GL_TRUE, projectionMatrix.m);
-	printError("init shader pPhong");
-
+	// Shaders
+	initShaders();
 	// Load terrain
 	LoadTGATextureData("textures/fft-terrain.tga", &ttex);
-	tm = generateTerrain(&ttex, quadPixelWidth, quadPixelHeight);
+	terrain = generateTerrain(&ttex, quadPixelWidth, quadPixelHeight);
 	printError("init terrain");
 
 	// Objects
@@ -81,31 +135,30 @@ void display(void)
 {
 	// clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mat4 modelView, model, camMatrix;
-
 	printError("pre display");
 
-	camMatrix = cameraLookAt();
+	mat4 view = cameraLookAt();
 
+	/* --------------- *
+	 * pTerrain shader *
+	 * --------------- */
+	glUseProgram(pTerrain);
 	// Terrain
-	glUseProgram(program);
-	glUniform3fv(glGetUniformLocation(program, "cameraPosition"), 1, &camera.pos.x);
-	model = IdentityMatrix();
-	modelView = Mult(camMatrix, model);
-	glUniformMatrix4fv(glGetUniformLocation(program, "modelView"), 1, GL_TRUE, modelView.m);
-	glBindTexture(GL_TEXTURE_2D, tex1);
-	DrawModel(tm, program, "inPosition", "inNormal", "inTexCoord");
+	mat4 model = IdentityMatrix();
+	shaderUpload(pTerrain, &model, &view, &camera.pos, -1, 10);	
+	DrawModel(terrain, pTerrain, "inVertex", "inNormal", "inTexCoord");
 	printError("display 2");
-	
-	// Ground Sphere
+
+	/* ------------- *
+	 * pPhong shader *
+	 * ------------- */ 
 	glUseProgram(pPhong);
-	glUniform3fv(glGetUniformLocation(pPhong, "cameraPosition"), 1, &camera.pos.x);
+	// Ground Sphere
 	model = objectGetModelMatrix(&groundSphere);
-	modelView = Mult(camMatrix, model);
-	glUniformMatrix4fv(glGetUniformLocation(pPhong, "modelView"), 1, GL_TRUE, modelView.m);
-	DrawModel(groundSphere.model, program, "inPosition", "inNormal", NULL);
+	shaderUpload(pPhong, &model, &view, &camera.pos, -1, 125);
+	DrawModel(groundSphere.model, pPhong, "inVertex", "inNormal", NULL);
 	printError("display 3");
-	 
+
 	glutSwapBuffers();
 }
 
@@ -113,7 +166,7 @@ void timer(int i)
 {
 	mouseWarp(100, 100);
 	keyboardHandler(&groundSphere);
-	groundSphere.position.y = calcY(tm->vertexArray, groundSphere.position.x, groundSphere.position.z, quadPixelWidth, quadPixelHeight, ttex.width, ttex.height);
+	groundSphere.position.y = calcY(terrain->vertexArray, groundSphere.position.x, groundSphere.position.z, quadPixelWidth, quadPixelHeight, ttex.width, ttex.height);
 	glutTimerFunc(20, &timer, i);
 	glutPostRedisplay();
 }
