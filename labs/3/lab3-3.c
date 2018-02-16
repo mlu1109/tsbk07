@@ -81,6 +81,10 @@ void init(void)
 		1.0f,  // Near
 		300.0f // Far
 	);
+	glUseProgram(colorShaders);
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "project"), 1, GL_TRUE, project.m);
+	glUseProgram(textureShaders);
+	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "project"), 1, GL_TRUE, project.m);
 }
 
 void display(void)
@@ -97,31 +101,33 @@ void display(void)
 	viewSkyBox.m[3] = 0;
 	viewSkyBox.m[7] = 0;
 	viewSkyBox.m[11] = 0;
-	mat4 mvp = mult2(project, viewSkyBox);
+	mat4 model = IdentityMatrix();
 	glUniform1i(glGetUniformLocation(textureShaders, "texUnit"), 0);
-	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "view"), 1, GL_TRUE, viewSkyBox.m);
+	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(skybox, textureShaders, "inVertex", NULL, "inTexCoord");
 	glEnable(GL_DEPTH_TEST);
 	/* Ground */
-	mvp = mult3(project, view, S(100, 0.01, 100));
+	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "view"), 1, GL_TRUE, view.m);
+	model = S(100, 0.01, 100);
 	glUniform1i(glGetUniformLocation(textureShaders, "texUnit"), 1);
-	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(cube, textureShaders, "inVertex", NULL, "inTexCoord");
 	/* Car */
 	float radius = 7;
 	float speed = 0.0015;
 	float c = cos(t * speed);
 	float s = sin(t * speed);
-	mvp = mult3(project, view, mult3(S(4, 4, 4), T(-radius * c, 0, -radius * s), Ry(-speed * t)));
+	model = mult3(S(4, 4, 4), T(-radius * c, 0, -radius * s), Ry(-speed * t));
 	glUniform1i(glGetUniformLocation(textureShaders, "texUnit"), 2);
-	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	glUniformMatrix4fv(glGetUniformLocation(textureShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(car, textureShaders, "inVertex", NULL, "inTexCoord");
 	/* Windmill */
 	glUseProgram(colorShaders);
-	mat4 transform = Ry(M_PI / 10000 * t);
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "view"), 1, GL_TRUE, view.m);
+	model = Ry(M_PI / 10000 * t);
 	// Windmill base
-	mvp = mult3(project, view, transform);
-	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(wm.walls, colorShaders, "inVertex", "inNormal", NULL);
 	DrawModel(wm.roof, colorShaders, "inVertex", "inNormal", NULL);
 	DrawModel(wm.balcony, colorShaders, "inVertex", "inNormal", NULL);
@@ -133,28 +139,27 @@ void display(void)
 			i * M_PI / 2 +   // Position each blade relative to each other
 			-M_PI / 2000 * t // Rotate blades with angular velocity
 		);
-		mat4 transform_i = mult3(transform, tr, rx);
-		mvp = mult3(project, view, transform_i);
-		glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+		mat4 model_i = mult3(model, tr, rx);
+		glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model_i.m);
 		DrawModel(wm.blades, colorShaders, "inVertex", "inNormal", NULL);
 	}
 	/* Cubes */
 	c = cos(t * 0.01);
 	s = sin(t * 0.01);
-	mvp = mult3(project, view, mult4(T(0, 20 + s, -5), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4)));
-	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	model = mult4(T(0, 20 + s, -5), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4));
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(cube, colorShaders, "inVertex", "inNormal", NULL);
-	mvp = mult3(project, view, mult4(T(0, 20 + s, 5), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4)));
-	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	model = mult4(T(0, 20 + s, 5), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4));
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(cube, colorShaders, "inVertex", "inNormal", NULL);
-	mvp = mult3(project, view, mult4(T(5, 20 + s, 0), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4)));
-	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	model = mult4(T(5, 20 + s, 0), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4));
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(cube, colorShaders, "inVertex", "inNormal", NULL);
-	mvp = mult3(project, view, mult4(T(-5, 20 + s, 0), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4)));
-	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	model = mult4(T(-5, 20 + s, 0), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4));
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(cube, colorShaders, "inVertex", "inNormal", NULL);
-	mvp = mult3(project, view, mult2(mult4(T(0, 30 - 5 * c, 0), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4)), S(10, 10, 10)));
-	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "mvp"), 1, GL_TRUE, mvp.m);
+	model = mult2(mult4(T(0, 30 - 5 * c, 0), Ry(M_PI / 500 * t), Rx(M_PI / 4), Rz(M_PI / 4)), S(10, 10, 10));
+	glUniformMatrix4fv(glGetUniformLocation(colorShaders, "model"), 1, GL_TRUE, model.m);
 	DrawModel(cube, colorShaders, "inVertex", "inNormal", NULL);
 	printError("draw models");
 	//glFinish();

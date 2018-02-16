@@ -38,8 +38,8 @@ void init(void)
 	wm.balcony = LoadModelPlus("models/windmill/windmill-balcony.obj");
 	wm.roof = LoadModelPlus("models/windmill/windmill-roof.obj");
 	// Init camera
-	vec3 camera_pos = {0.0f, 0.0f, -30.0f};
-	vec3 camera_look = {0.0f, 0.0f, 0.0f};
+	vec3 camera_pos = {0.0f, 10.0f, -30.0f};
+	vec3 camera_look = {0.0f, 5.0f, 0.0f};
 	vec3 camera_up = {0.0f, 1.0f, 0.0f};
 	cameraInit(camera_pos, camera_look, camera_up);
 	// Init projection
@@ -51,19 +51,20 @@ void init(void)
 		1.0f,  // Near
 		100.0f // Far
 	);
+	mat4 view = cameraLookAt();
+	glUniformMatrix4fv(glGetUniformLocation(program, "project"), 1, GL_TRUE, project.m);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.m);
 }
 
 void display(void)
 {
-	mat4 view = lookAtv(camera.pos, camera.look, camera.up);
 	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 	printError("display pre");
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Windmill
-	mat4 transform = Ry(M_PI/10000 * t);
+	mat4 model = Ry(M_PI / 10000 * t);
 	// Windmill base
-	mat4 mvp = mult3(project, view, transform);
-	glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_TRUE, mvp.m);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.m);
 	DrawModel(wm.walls, program, "inVertex", "inNormal", NULL);
 	DrawModel(wm.roof, program, "inVertex", "inNormal", NULL);
 	DrawModel(wm.balcony, program, "inVertex", "inNormal", NULL);
@@ -72,12 +73,11 @@ void display(void)
 	{
 		mat4 tr = T(5.0f, 9.0f, 0.0f); // Position blades relative to model base
 		mat4 rx = Rx(
-			i * M_PI / 2 +  // Position each blade
+			i * M_PI / 2 +   // Position each blade
 			-M_PI / 2000 * t // Angular velocity * time
 		);
-		mat4 transform_i = mult3(transform, tr, rx);
-		mvp = mult3(project, view, transform_i);
-		glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_TRUE, mvp.m);
+		mat4 model_i = mult3(model, tr, rx);
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_i.m);
 		DrawModel(wm.blades, program, "inVertex", "inNormal", NULL);
 	}
 	glFinish();

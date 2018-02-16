@@ -56,6 +56,7 @@ void init(void)
 		1.0f,  // Near
 		300.0f // Far
 	);
+	glUniformMatrix4fv(glGetUniformLocation(program, "project"), 1, GL_TRUE, project.m);
 }
 
 void display(void)
@@ -65,14 +66,14 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Camera
 	mat4 view = cameraLookAt();
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.m);
 	// Windmill
-	mat4 transform = mult2(
+	mat4 model = mult2(
 		Ry(M_PI / 10000 * t),
-		T(0, -7, 0) // Center the model
+		T(0, -7, 0)
 	);
 	// Windmill base
-	mat4 mvp = mult3(project, view, transform);
-	glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_TRUE, mvp.m);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.m);
 	DrawModel(wm.walls, program, "inVertex", "inNormal", NULL);
 	DrawModel(wm.roof, program, "inVertex", "inNormal", NULL);
 	DrawModel(wm.balcony, program, "inVertex", "inNormal", NULL);
@@ -84,9 +85,8 @@ void display(void)
 			i * M_PI / 2 +   // Position each blade
 			-M_PI / 2000 * t // Angular velocity * time
 		);
-		mat4 transform_i = mult3(transform, tr, rx);
-		mvp = mult3(project, view, transform_i);
-		glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_TRUE, mvp.m);
+		mat4 model_i = mult3(model, tr, rx);
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_i.m);
 		DrawModel(wm.blades, program, "inVertex", "inNormal", NULL);
 	}
 	glFinish();
@@ -96,6 +96,7 @@ void display(void)
 
 void onTimer(int value)
 {
+	mouseWarp(100, 100);
 	keyboardHandler();
 	glutPostRedisplay();
 	glutTimerFunc(20, &onTimer, value);

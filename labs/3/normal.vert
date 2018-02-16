@@ -1,12 +1,14 @@
 #version 150
 in vec3 inVertex;
 in vec3 inNormal;
-out vec3 inFragNormal;
+out vec3 normal;
 
-uniform mat4 mvp;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 project;
 
 void main(void)
 {
-	gl_Position = mvp * vec4(inVertex, 1.0);
-    inFragNormal = inNormal;
+    normal = inNormal;
+	gl_Position = project * view * model * vec4(inVertex, 1.0);
 }

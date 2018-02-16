@@ -15,17 +15,15 @@ struct Mouse
 
 void mouseWarp(int x, int y)
 {
-	glutWarpPointer(100, 100);
-	mouse.lastX = 100;
-	mouse.lastY = 100;
+	glutWarpPointer(x, y);
+	mouse.lastX = x;
+	mouse.lastY = y;
 }
 
 void mouseMotionFunc(int x, int y)
 {
 	int dx = mouse.lastX - x;
 	int dy = mouse.lastY - y;
-	mouse.lastX = x;
-	mouse.lastY = y;
 
 	if (mouse.button[0] == true && mouse.button[1] == true)
 	{

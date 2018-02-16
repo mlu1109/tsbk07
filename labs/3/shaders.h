@@ -3,6 +3,7 @@
 
 #include "VectorUtils3.h"
 
-void shaderUpload(GLuint program, mat4 *mvp, mat4 *transform, GLuint texUnit, GLfloat specularExponent);
-void shaderUpload2Textures(GLuint program, mat4 *mvp, mat4 *transform, GLuint texUnit, GLuint texUnit2, GLfloat specularExponent);
+void shaderUpload(GLuint program, mat4 *model, mat4 *view, GLuint texUnit, GLfloat specularExponent);
+void shaderUpload2Textures(GLuint program, mat4 *model, mat4 *view, GLuint texUnit, GLuint texUnit2, GLfloat specularExponent);
+
 #endif

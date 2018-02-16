@@ -1,10 +1,10 @@
 #version 150
-in vec2 inFragTexCoord;
+in vec2 texCoord;
 out vec4 outColor;
 
 uniform sampler2D texUnit;
 
 void main(void)
 {
-	outColor = texture(texUnit, inFragTexCoord);
+	outColor = texture(texUnit, texCoord);
 }

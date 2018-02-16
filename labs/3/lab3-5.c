@@ -13,12 +13,14 @@
 #include "input.h"
 #include "shaders.h"
 
+const float k_a = 0.1;
+const float k_s = 1.0;
+const float k_d = 0.6;
+
 GLuint pPhongColor;
 GLuint pTexture;
 GLuint pPhongTexture;
 GLuint pPhongMultiTexture;
-
-mat4 project;
 
 struct WindMill
 {
@@ -56,21 +58,50 @@ void initShaders(void)
 		0.0f, 0.0f, 1.0f, // 3: Blue
 		1.0f, 1.0f, 1.0f  // 4: White
 	};
+
+	/* Init projection */
+	mat4 project = frustum(
+		-0.5f, // Left
+		0.5f,  // Right
+		-0.5f, // Bottom
+		0.5f,  // Top
+		1.0f,  // Near
+		300.0f // Far
+	);
+
+	// pTexture
+	glUseProgram(pTexture);
+	glUniformMatrix4fv(glGetUniformLocation(pTexture, "project"), 1, GL_TRUE, project.m);
+
 	// pPhongTexture
 	glUseProgram(pPhongTexture);
 	glUniform3fv(glGetUniformLocation(pPhongTexture, "lightPosition"), 4, lightPosition);
 	glUniform3fv(glGetUniformLocation(pPhongTexture, "lightColor"), 4, lightColor);
 	glUniform1iv(glGetUniformLocation(pPhongTexture, "isDirectional"), 4, isDirectional);
+	glUniformMatrix4fv(glGetUniformLocation(pPhongTexture, "project"), 1, GL_TRUE, project.m);
+	glUniform1f(glGetUniformLocation(pPhongTexture, "k_a"), k_a);
+	glUniform1f(glGetUniformLocation(pPhongTexture, "k_d"), k_d);
+	glUniform1f(glGetUniformLocation(pPhongTexture, "k_s"), k_s);
+
 	// pPhongMultiTexture
 	glUseProgram(pPhongMultiTexture);
 	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightPosition"), 4, lightPosition);
 	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightColor"), 4, lightColor);
 	glUniform1iv(glGetUniformLocation(pPhongMultiTexture, "isDirectional"), 4, isDirectional);
+	glUniformMatrix4fv(glGetUniformLocation(pPhongMultiTexture, "project"), 1, GL_TRUE, project.m);
+	glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_a"), k_a);
+	glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_d"), k_d);
+	glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_s"), k_s);
+
 	// pPhongColor
 	glUseProgram(pPhongColor);
 	glUniform3fv(glGetUniformLocation(pPhongColor, "lightPosition"), 4, lightPosition);
 	glUniform3fv(glGetUniformLocation(pPhongColor, "lightColor"), 4, lightColor);
 	glUniform1iv(glGetUniformLocation(pPhongColor, "isDirectional"), 4, isDirectional);
+	glUniformMatrix4fv(glGetUniformLocation(pPhongColor, "project"), 1, GL_TRUE, project.m);
+	glUniform1f(glGetUniformLocation(pPhongColor, "k_a"), k_a);
+	glUniform1f(glGetUniformLocation(pPhongColor, "k_d"), k_d);
+	glUniform1f(glGetUniformLocation(pPhongColor, "k_s"), k_s);
 
 	printError("init shader");
 }
@@ -128,15 +159,6 @@ void init(void)
 	vec3 camera_look = {0.0f, 5.0f, 0.0f};
 	vec3 camera_up = {0.0f, 1.0f, 0.0f};
 	cameraInit(camera_pos, camera_look, camera_up);
-	/* Init projection */
-	project = frustum(
-		-0.5f, // Left
-		0.5f,  // Right
-		-0.5f, // Bottom
-		0.5f,  // Top
-		1.0f,  // Near
-		300.0f // Far
-	);
 }
 
 void display(void)
@@ -157,8 +179,8 @@ void display(void)
 	viewSkyBox.m[3] = 0;
 	viewSkyBox.m[7] = 0;
 	viewSkyBox.m[11] = 0;
-	mat4 mvp = mult2(project, viewSkyBox);
-	shaderUpload(pTexture, &mvp, NULL, 0, -1);
+	mat4 model = IdentityMatrix();
+	shaderUpload(pTexture, &model, &viewSkyBox, 0, -1);
 	DrawModel(skybox, pTexture, "inVertex", NULL, "inTexCoord");
 	glEnable(GL_DEPTH_TEST);
 	/* -------------------------- *
@@ -167,21 +189,19 @@ void display(void)
 	glUseProgram(pPhongMultiTexture);
 	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "cameraPosition"), 1, &camera.pos.x);
 	/* Ground */
-	mat4 transform = S(100, 0.01, 100);
-	mvp = mult3(project, view, transform);
-	shaderUpload2Textures(pPhongMultiTexture, &mvp, &transform, 1, 3, 2500);
+	model = S(100, 0.01, 100);
+	shaderUpload2Textures(pPhongMultiTexture, &model, &view, 1, 3, 2500);
 	DrawModel(cube, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
 	/* Car */
 	float radius = 20;
 	float speed = 0.0015;
 	float c = cos(t * speed);
 	float s = sin(t * speed);
-	transform = mult3(
+	model = mult3(
 		T(-radius * c, 0, -radius * s),
 		Ry(-speed * t),
 		S(4, 4, 4));
-	mvp = mult3(project, view, transform);
-	shaderUpload2Textures(pPhongMultiTexture, &mvp, &transform, 2, 3, 250);
+	shaderUpload2Textures(pPhongMultiTexture, &model, NULL, 2, 3, 250);
 	DrawModel(car, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
 	/* -------------------- *
 	 * Phong texture shader *
@@ -194,28 +214,26 @@ void display(void)
 	glUseProgram(pPhongColor);
 	glUniform3fv(glGetUniformLocation(pPhongColor, "cameraPosition"), 1, &camera.pos.x);
 	/* Windmill */
-	transform = Ry(M_PI / 50000 * t);
+	model = Ry(M_PI / 50000 * t);
 	// Windmill base
-	mvp = mult3(project, view, transform);
-	shaderUpload(pPhongColor, &mvp, &transform, -1, 300);
+	shaderUpload(pPhongColor, &model, &view, -1, 300);
 	DrawModel(wm.walls, pPhongColor, "inVertex", "inNormal", NULL);
 	DrawModel(wm.roof, pPhongColor, "inVertex", "inNormal", NULL);
 	DrawModel(wm.balcony, pPhongColor, "inVertex", "inNormal", NULL);
 	// Windmill blades
 	for (int i = 0; i < 4; ++i)
 	{
-		mat4 transform_i = mult3(
-			transform,
+		mat4 model_i = mult3(
+			model,
 			T(4.5f, 9.0f, 0.0f),
 			Rx(i * M_PI / 2 + -M_PI / 2000 * t));
-		mvp = mult3(project, view, transform_i);
-		shaderUpload(pPhongColor, &mvp, &transform_i, -1, -1);
+		shaderUpload(pPhongColor, &model_i, &view, -1, -1);
 		DrawModel(wm.blades, pPhongColor, "inVertex", "inNormal", NULL);
 	}
 	/* Cubes */
 	c = cos(t * 0.001);
 	s = sin(t * 0.001);
-	transform = mult3(
+	model = mult3(
 		Ry(M_PI / 3000 * t),
 		Rx(M_PI / 4),
 		Rz(M_PI / 4));
@@ -226,17 +244,14 @@ void display(void)
 		T(5, 15 + s, 0)};
 	for (int i = 0; i < 4; ++i)
 	{
-		mat4 transform_i = mult2(cubeTranslation[i], transform);
-		mvp = mult3(project, view, transform_i);
-		shaderUpload(pPhongColor, &mvp, &transform_i, -1, 30);
+		mat4 model_i = mult2(cubeTranslation[i], model);
+		shaderUpload(pPhongColor, &model_i, NULL, -1, 30);
 		DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
 	}
-	transform = mult3(T(0, 30 - 5 * c, 0), S(10, 10, 10), transform);
-	mvp = mult3(project, view, transform);
-	shaderUpload(pPhongColor, &mvp, &transform, -1, 10);
+	model = mult3(T(0, 30 - 5 * c, 0), S(10, 10, 10), model);
+	shaderUpload(pPhongColor, &model, NULL, -1, 10);
 	DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
 	printError("draw models");
-	//glFinish();
 	glutSwapBuffers();
 	printError("display after");
 }
@@ -254,7 +269,7 @@ int main(int argc, char *argv[])
 	glutInit(&argc, argv);
 	glutInitContextVersion(3, 2);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutCreateWindow("Lab 3.4");
+	glutCreateWindow("Lab 3.5");
 	printError("init glut inits");
 	init();
 	glutTimerFunc(20, &onTimer, 0);

@@ -1,12 +1,14 @@
 #version 150
 in vec3 inVertex;
 in vec2 inTexCoord;
-out vec2 inFragTexCoord;
+out vec2 texCoord;
 
-uniform mat4 mvp;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 project;
 
 void main(void)
 {
-    inFragTexCoord = inTexCoord;
-	gl_Position = mvp * vec4(inVertex, 1.0);
+    texCoord = inTexCoord;
+	gl_Position = project * view * model * vec4(inVertex, 1.0);
 }
