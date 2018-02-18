@@ -5,5 +5,5 @@ out vec4 outColor;
 
 void main(void)
 {
-	outColor = vec4(inFragNormal, 1.0);
+    outColor = vec4(inFragNormal, 1.0);
 }

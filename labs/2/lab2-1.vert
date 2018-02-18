@@ -16,7 +16,7 @@ out vec2 inFragTexCoord;
 
 void main(void)
 {
-	// inFragNormal = inNormal;
-	inFragTexCoord = inTexCoord;
-	gl_Position = rotY * vec4(inPosition, 1.0);
+    // inFragNormal = inNormal;
+    inFragTexCoord = inTexCoord;
+    gl_Position = rotY * vec4(inPosition, 1.0);
 }

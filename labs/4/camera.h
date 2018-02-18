@@ -6,12 +6,12 @@
 
 struct Camera
 {
-	vec3 pos;
-	vec3 look;
-	vec3 up;
-	vec3 reset_pos;
-	vec3 reset_look;
-	vec3 reset_up;
+    vec3 pos;
+    vec3 look;
+    vec3 up;
+    vec3 reset_pos;
+    vec3 reset_look;
+    vec3 reset_up;
 } camera;
 
 void cameraInit(vec3 pos, vec3 look, vec3 up);

@@ -16,61 +16,61 @@ mat4 projectionMatrix;
 
 Model *GenerateTerrain(TextureData *tex)
 {
-	int vertexCount = tex->width * tex->height;
-	int triangleCount = (tex->width - 1) * (tex->height - 1) * 2;
-	int x, z;
+    int vertexCount = tex->width * tex->height;
+    int triangleCount = (tex->width - 1) * (tex->height - 1) * 2;
+    int x, z;
 
-	GLfloat *vertexArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
-	GLfloat *normalArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
-	GLfloat *texCoordArray = malloc(sizeof(GLfloat) * 2 * vertexCount);
-	GLuint *indexArray = malloc(sizeof(GLuint) * triangleCount * 3);
+    GLfloat *vertexArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
+    GLfloat *normalArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
+    GLfloat *texCoordArray = malloc(sizeof(GLfloat) * 2 * vertexCount);
+    GLuint *indexArray = malloc(sizeof(GLuint) * triangleCount * 3);
 
-	printf("bpp %d\n", tex->bpp);
-	for (x = 0; x < tex->width; x++)
-	{
-		for (z = 0; z < tex->height; z++)
-		{
-			// Vertex array. You need to scale this properly
-			vertexArray[(x + z * tex->width) * 3 + 0] = x / 1.0;
-			vertexArray[(x + z * tex->width) * 3 + 1] = tex->imageData[(x + z * tex->width) * (tex->bpp / 8)] / 100.0;
-			vertexArray[(x + z * tex->width) * 3 + 2] = z / 1.0;
-			// Normal vectors. You need to calculate these.
-			normalArray[(x + z * tex->width) * 3 + 0] = 0.0;
-			normalArray[(x + z * tex->width) * 3 + 1] = 1.0;
-			normalArray[(x + z * tex->width) * 3 + 2] = 0.0;
-			// Texture coordinates. You may want to scale them.
-			texCoordArray[(x + z * tex->width) * 2 + 0] = (float)x / tex->width;
-			texCoordArray[(x + z * tex->width) * 2 + 1] = (float)z / tex->height;
-		}
-	}
-	for (x = 0; x < tex->width - 1; x++)
-	{
-		for (z = 0; z < tex->height - 1; z++)
-		{
-			// Triangle 1
-			indexArray[(x + z * (tex->width - 1)) * 6 + 0] = x + z * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 1] = x + (z + 1) * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 2] = x + 1 + z * tex->width;
-			// Triangle 2
-			indexArray[(x + z * (tex->width - 1)) * 6 + 3] = x + 1 + z * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 4] = x + (z + 1) * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 5] = x + 1 + (z + 1) * tex->width;
-		}
-	}
+    printf("bpp %d\n", tex->bpp);
+    for (x = 0; x < tex->width; x++)
+    {
+        for (z = 0; z < tex->height; z++)
+        {
+            // Vertex array. You need to scale this properly
+            vertexArray[(x + z * tex->width) * 3 + 0] = x / 1.0;
+            vertexArray[(x + z * tex->width) * 3 + 1] = tex->imageData[(x + z * tex->width) * (tex->bpp / 8)] / 100.0;
+            vertexArray[(x + z * tex->width) * 3 + 2] = z / 1.0;
+            // Normal vectors. You need to calculate these.
+            normalArray[(x + z * tex->width) * 3 + 0] = 0.0;
+            normalArray[(x + z * tex->width) * 3 + 1] = 1.0;
+            normalArray[(x + z * tex->width) * 3 + 2] = 0.0;
+            // Texture coordinates. You may want to scale them.
+            texCoordArray[(x + z * tex->width) * 2 + 0] = (float)x / tex->width;
+            texCoordArray[(x + z * tex->width) * 2 + 1] = (float)z / tex->height;
+        }
+    }
+    for (x = 0; x < tex->width - 1; x++)
+    {
+        for (z = 0; z < tex->height - 1; z++)
+        {
+            // Triangle 1
+            indexArray[(x + z * (tex->width - 1)) * 6 + 0] = x + z * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 1] = x + (z + 1) * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 2] = x + 1 + z * tex->width;
+            // Triangle 2
+            indexArray[(x + z * (tex->width - 1)) * 6 + 3] = x + 1 + z * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 4] = x + (z + 1) * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 5] = x + 1 + (z + 1) * tex->width;
+        }
+    }
 
-	// End of terrain generation
-	// Create Model and upload to GPU:
+    // End of terrain generation
+    // Create Model and upload to GPU:
 
-	Model *model = LoadDataToModel(
-		vertexArray,
-		normalArray,
-		texCoordArray,
-		NULL,
-		indexArray,
-		vertexCount,
-		triangleCount * 3);
+    Model *model = LoadDataToModel(
+        vertexArray,
+        normalArray,
+        texCoordArray,
+        NULL,
+        indexArray,
+        vertexCount,
+        triangleCount * 3);
 
-	return model;
+    return model;
 }
 
 // vertex array object
@@ -82,80 +82,80 @@ TextureData ttex; // terrain
 
 void init(void)
 {
-	// GL inits
-	glClearColor(0.2, 0.2, 0.5, 0);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	printError("GL inits");
-	// Camera
-	vec3 cam = {5, 5, 24};
-	vec3 lookAtPoint = {2, 0, 2};
-	vec3 up = {0, 1, 0};
-	cameraInit(cam, lookAtPoint, up);
-	// Input
-	inputInit();
+    // GL inits
+    glClearColor(0.2, 0.2, 0.5, 0);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    printError("GL inits");
+    // Camera
+    vec3 cam = {5, 5, 24};
+    vec3 lookAtPoint = {2, 0, 2};
+    vec3 up = {0, 1, 0};
+    cameraInit(cam, lookAtPoint, up);
+    // Input
+    inputInit();
 
-	projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 300.0);
+    projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 300.0);
 
-	// Load and compile shader
-	program = loadShaders("4/terrain.vert", "4/terrain.frag");
-	glUseProgram(program);
-	printError("init shader");
+    // Load and compile shader
+    program = loadShaders("4/terrain.vert", "4/terrain.frag");
+    glUseProgram(program);
+    printError("init shader");
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projectionMatrix.m);
-	glUniform1i(glGetUniformLocation(program, "tex"), 0); // Texture unit 0
-	LoadTGATextureSimple("textures/maskros512.tga", &tex1);
+    glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projectionMatrix.m);
+    glUniform1i(glGetUniformLocation(program, "tex"), 0); // Texture unit 0
+    LoadTGATextureSimple("textures/maskros512.tga", &tex1);
 
-	// Load terrain data
+    // Load terrain data
 
-	LoadTGATextureData("textures/fft-terrain.tga", &ttex);
-	tm = GenerateTerrain(&ttex);
-	printError("init terrain");
+    LoadTGATextureData("textures/fft-terrain.tga", &ttex);
+    tm = GenerateTerrain(&ttex);
+    printError("init terrain");
 }
 
 void display(void)
 {
-	// clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // clear the screen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	mat4 total, modelView, camMatrix;
+    mat4 total, modelView, camMatrix;
 
-	printError("pre display");
+    printError("pre display");
 
-	glUseProgram(program);
+    glUseProgram(program);
 
-	// Build matrix
-	camMatrix = cameraLookAt();
-	modelView = IdentityMatrix();
-	total = Mult(camMatrix, modelView);
-	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
+    // Build matrix
+    camMatrix = cameraLookAt();
+    modelView = IdentityMatrix();
+    total = Mult(camMatrix, modelView);
+    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
 
-	glBindTexture(GL_TEXTURE_2D, tex1); // Bind Our Texture tex1
-	DrawModel(tm, program, "inPosition", NULL, "inTexCoord");
+    glBindTexture(GL_TEXTURE_2D, tex1); // Bind Our Texture tex1
+    DrawModel(tm, program, "inPosition", NULL, "inTexCoord");
 
-	printError("display 2");
+    printError("display 2");
 
-	glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 void timer(int i)
 {
-	mouseWarp(300, 300);
-	keyboardHandler(NULL);
-	glutTimerFunc(20, &timer, i);
-	glutPostRedisplay();
+    mouseWarp(300, 300);
+    keyboardHandler(NULL);
+    glutTimerFunc(20, &timer, i);
+    glutPostRedisplay();
 }
 
 int main(int argc, char **argv)
 {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitContextVersion(3, 2);
-	glutInitWindowSize(600, 600);
-	glutCreateWindow("Lab 4.2");
-	glutDisplayFunc(display);
-	init();
-	glutTimerFunc(20, &timer, 0);
-	glutMainLoop();
-	exit(0);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitContextVersion(3, 2);
+    glutInitWindowSize(600, 600);
+    glutCreateWindow("Lab 4.2");
+    glutDisplayFunc(display);
+    init();
+    glutTimerFunc(20, &timer, 0);
+    glutMainLoop();
+    exit(0);
 }

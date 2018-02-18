@@ -16,31 +16,31 @@ uniform float k_s;
 
 void main(void)
 {
-	float a = specularExponent;
-	vec3 n = normalize(normal);
-	vec3 v = normalize(cameraPosition - vertex);
-	vec3 ambient = vec3(0, 0, 0);
-	vec3 diffuse = vec3(0, 0, 0);
-	vec3 specular = vec3(0, 0, 0);
-	for (int i = 0; i < 4; ++i)
-	{
-    	vec3 s; // the source of the light's position
-		if (isDirectional[i] == true) 
-			s = normalize(lightPosition[i]);
-		else
-			s = normalize(vertex - lightPosition[i]);
-		// Ambient: i_amb = k_a * i_a
-		ambient += k_a * s * lightColor[i];
-		// Diffuse: i_diff = k_d * i_s * cos(theta)
-		float cos_theta = max(dot(s, n), 0);
-		diffuse += k_d * lightColor[i] * cos_theta;
-		// Specular: i_spec = k_s * i_s *cos(theta_s)^a
-		// 			 where	cos(theta_s) = r_s * v
-		//					r_s = 2*n*(s*n) - 
-		vec3 r_s = normalize(2 * n * dot(s, n) - s);
-		float cos_theta_s = max(dot(r_s, v), 0);
-		specular += k_s * lightColor[i] * pow(cos_theta_s, a);
-	}
-	
-	outColor = vec4(ambient, 1.0) + vec4(diffuse, 1.0) + vec4(specular, 1.0);
+    float a = specularExponent;
+    vec3 n = normalize(normal);
+    vec3 v = normalize(cameraPosition - vertex);
+    vec3 ambient = vec3(0, 0, 0);
+    vec3 diffuse = vec3(0, 0, 0);
+    vec3 specular = vec3(0, 0, 0);
+    for (int i = 0; i < 4; ++i)
+    {
+        vec3 s; // the source of the light's position
+        if (isDirectional[i] == true) 
+            s = normalize(lightPosition[i]);
+        else
+            s = normalize(vertex - lightPosition[i]);
+        // Ambient: i_amb = k_a * i_a
+        ambient += k_a * s * lightColor[i];
+        // Diffuse: i_diff = k_d * i_s * cos(theta)
+        float cos_theta = max(dot(s, n), 0);
+        diffuse += k_d * lightColor[i] * cos_theta;
+        // Specular: i_spec = k_s * i_s *cos(theta_s)^a
+        // 			 where	cos(theta_s) = r_s * v
+        //					r_s = 2*n*(s*n) - 
+        vec3 r_s = normalize(2 * n * dot(s, n) - s);
+        float cos_theta_s = max(dot(r_s, v), 0);
+        specular += k_s * lightColor[i] * pow(cos_theta_s, a);
+    }
+    
+    outColor = vec4(ambient, 1.0) + vec4(diffuse, 1.0) + vec4(specular, 1.0);
 }

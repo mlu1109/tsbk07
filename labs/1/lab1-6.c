@@ -30,43 +30,43 @@ GLuint program;
 
 void OnTimer(int value)
 {
-	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
-	float a = M_PI / 5000; // angular velocity
-	GLfloat rotZ[16];
-	genRotZ(rotZ, a*t);
-	GLfloat rotY[16];
-	genRotY(rotY, a*t);
-	GLfloat rotX[16];
-	genRotX(rotX, a*t);
+    GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
+    float a = M_PI / 5000; // angular velocity
+    GLfloat rotZ[16];
+    genRotZ(rotZ, a*t);
+    GLfloat rotY[16];
+    genRotY(rotY, a*t);
+    GLfloat rotX[16];
+    genRotX(rotX, a*t);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotY"), 1, GL_TRUE, rotY);
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotX"), 1, GL_TRUE, rotX);
-	printError("ontimer upload");
+    glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
+    glUniformMatrix4fv(glGetUniformLocation(program, "rotY"), 1, GL_TRUE, rotY);
+    glUniformMatrix4fv(glGetUniformLocation(program, "rotX"), 1, GL_TRUE, rotX);
+    printError("ontimer upload");
 
-	glutPostRedisplay();
-	glutTimerFunc(20, &OnTimer, value);
+    glutPostRedisplay();
+    glutTimerFunc(20, &OnTimer, value);
 }
 
 void init(void)
 {
-	// vertex buffer object, used for uploading the geometry
-	unsigned int bunnyVertexBufferObjID;
-	unsigned int bunnyIndexBufferObjID;
-	unsigned int bunnyNormalBufferObjID;
-	dumpInfo();
+    // vertex buffer object, used for uploading the geometry
+    unsigned int bunnyVertexBufferObjID;
+    unsigned int bunnyIndexBufferObjID;
+    unsigned int bunnyNormalBufferObjID;
+    dumpInfo();
 
-	// GL inits
-	glClearColor(0.2, 0.2, 0.5, 0);
+    // GL inits
+    glClearColor(0.2, 0.2, 0.5, 0);
     glEnable(GL_DEPTH_TEST);
-	printError("GL inits");
+    printError("GL inits");
 
-	// Load object
-	m = LoadModel("models/bunny.obj");
+    // Load object
+    m = LoadModel("models/bunny.obj");
 
-	// Load and compile shader
-	program = loadShaders("1/lab1-6.vert", "1/lab1-6.frag");
-	printError("init shader");
+    // Load and compile shader
+    program = loadShaders("1/lab1-6.vert", "1/lab1-6.frag");
+    printError("init shader");
 
     glBindVertexArray(bunnyVertexArrayObjID);
 
@@ -89,37 +89,37 @@ void init(void)
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal"));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
-	printError("load models");
+    printError("load models");
 
-	// Z-buffer
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	printError("init arrays");
+    // Z-buffer
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    printError("init arrays");
 }
 
 void display(void)
 {
-	printError("pre display");
+    printError("pre display");
 
-	// clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // clear the screen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindVertexArray(bunnyVertexArrayObjID);    // Select VAO
     glDrawElements(GL_TRIANGLES, m->numIndices, GL_UNSIGNED_INT, 0L);
 
-	printError("display");
+    printError("display");
 
-	//glFinish();
-	glutSwapBuffers();
+    //glFinish();
+    glutSwapBuffers();
 }
 
 int main(int argc, char *argv[])
 {
-	glutInit(&argc, argv);
-	glutInitContextVersion(3, 2);
-	glutCreateWindow("Lab 1.6");
-	glutTimerFunc(20, &OnTimer, 0);
-	glutDisplayFunc(display);
-	init();
-	glutMainLoop();
-	return 0;
+    glutInit(&argc, argv);
+    glutInitContextVersion(3, 2);
+    glutCreateWindow("Lab 1.6");
+    glutTimerFunc(20, &OnTimer, 0);
+    glutDisplayFunc(display);
+    init();
+    glutMainLoop();
+    return 0;
 }

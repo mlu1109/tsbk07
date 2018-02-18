@@ -9,7 +9,7 @@ out vec3 inFragNormal;
 
 void main(void)
 {
-	mat4 rot = rotX * rotY * rotZ;
-	inFragNormal = vec3(rot * vec4(inNormal, 1.0));
-	gl_Position = rot * vec4(inPosition, 1.0);
+    mat4 rot = rotX * rotY * rotZ;
+    inFragNormal = vec3(rot * vec4(inNormal, 1.0));
+    gl_Position = rot * vec4(inPosition, 1.0);
 }

@@ -7,8 +7,8 @@ out vec4 outColor;
 
 void main(void)
 {
-	float t = inTimeStamp / 100;
-	float a = sin(inFragTexCoord.s*t)/2;
-	float b = sin(inFragTexCoord.t*t)/2;
-	outColor = vec4(a, b, 1.0, 1.0);
+    float t = inTimeStamp / 100;
+    float a = sin(inFragTexCoord.s*t)/2;
+    float b = sin(inFragTexCoord.t*t)/2;
+    outColor = vec4(a, b, 1.0, 1.0);
 }

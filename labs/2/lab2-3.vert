@@ -8,6 +8,6 @@ out vec2 inFragTexCoord;
 
 void main(void)
 {
-	inFragTexCoord = inTexCoord;
-	gl_Position = project * transform * vec4(inPosition, 1.0);
+    inFragTexCoord = inTexCoord;
+    gl_Position = project * transform * vec4(inPosition, 1.0);
 }

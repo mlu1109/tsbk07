@@ -24,10 +24,10 @@ GLuint pPhongMultiTexture;
 
 struct WindMill
 {
-	Model *blades;
-	Model *walls;
-	Model *balcony;
-	Model *roof;
+    Model *blades;
+    Model *walls;
+    Model *balcony;
+    Model *roof;
 } wm;
 
 Model *skybox;
@@ -36,244 +36,244 @@ Model *car;
 
 void initShaders(void)
 {
-	pPhongColor = loadShaders("3/phong.vert", "3/phong.frag");
-	pTexture = loadShaders("3/texture.vert", "3/texture.frag");
-	pPhongTexture = loadShaders("3/phong-texture.vert", "3/phong-texture.frag");
-	pPhongMultiTexture = loadShaders("3/phong-multi-texture.vert", "3/phong-multi-texture.frag");
+    pPhongColor = loadShaders("3/phong.vert", "3/phong.frag");
+    pTexture = loadShaders("3/texture.vert", "3/texture.frag");
+    pPhongTexture = loadShaders("3/phong-texture.vert", "3/phong-texture.frag");
+    pPhongMultiTexture = loadShaders("3/phong-multi-texture.vert", "3/phong-multi-texture.frag");
 
-	/* Light */
-	GLint isDirectional[] = {false, false, true, true};
-	GLfloat lightPosition[] = {
-		10.0f, 5.0f, 0.0f, // 1
-		0.0f, 5.0f, 10.0f, // 2
-		-1.0f, 0.0f, 0.0f, // 3
-		0.0f, 0.0f, -1.0f  // 4
-	};
+    /* Light */
+    GLint isDirectional[] = {false, false, true, true};
+    GLfloat lightPosition[] = {
+        10.0f, 5.0f, 0.0f, // 1
+        0.0f, 5.0f, 10.0f, // 2
+        -1.0f, 0.0f, 0.0f, // 3
+        0.0f, 0.0f, -1.0f  // 4
+    };
 
-	GLfloat lightColor[] = {
-		//0.0f, 0.0f, 0.0f,
-		//0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f, // 1: Red
-		0.0f, 1.0f, 0.0f, // 2: Green
-		0.0f, 0.0f, 1.0f, // 3: Blue
-		1.0f, 1.0f, 1.0f  // 4: White
-	};
+    GLfloat lightColor[] = {
+        //0.0f, 0.0f, 0.0f,
+        //0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f, // 1: Red
+        0.0f, 1.0f, 0.0f, // 2: Green
+        0.0f, 0.0f, 1.0f, // 3: Blue
+        1.0f, 1.0f, 1.0f  // 4: White
+    };
 
-	/* Init projection */
-	mat4 project = frustum(
-		-0.5f, // Left
-		0.5f,  // Right
-		-0.5f, // Bottom
-		0.5f,  // Top
-		1.0f,  // Near
-		300.0f // Far
-	);
+    /* Init projection */
+    mat4 project = frustum(
+        -0.5f, // Left
+        0.5f,  // Right
+        -0.5f, // Bottom
+        0.5f,  // Top
+        1.0f,  // Near
+        300.0f // Far
+    );
 
-	// pTexture
-	glUseProgram(pTexture);
-	glUniformMatrix4fv(glGetUniformLocation(pTexture, "project"), 1, GL_TRUE, project.m);
+    // pTexture
+    glUseProgram(pTexture);
+    glUniformMatrix4fv(glGetUniformLocation(pTexture, "project"), 1, GL_TRUE, project.m);
 
-	// pPhongTexture
-	glUseProgram(pPhongTexture);
-	glUniform3fv(glGetUniformLocation(pPhongTexture, "lightPosition"), 4, lightPosition);
-	glUniform3fv(glGetUniformLocation(pPhongTexture, "lightColor"), 4, lightColor);
-	glUniform1iv(glGetUniformLocation(pPhongTexture, "isDirectional"), 4, isDirectional);
-	glUniformMatrix4fv(glGetUniformLocation(pPhongTexture, "project"), 1, GL_TRUE, project.m);
-	glUniform1f(glGetUniformLocation(pPhongTexture, "k_a"), k_a);
-	glUniform1f(glGetUniformLocation(pPhongTexture, "k_d"), k_d);
-	glUniform1f(glGetUniformLocation(pPhongTexture, "k_s"), k_s);
+    // pPhongTexture
+    glUseProgram(pPhongTexture);
+    glUniform3fv(glGetUniformLocation(pPhongTexture, "lightPosition"), 4, lightPosition);
+    glUniform3fv(glGetUniformLocation(pPhongTexture, "lightColor"), 4, lightColor);
+    glUniform1iv(glGetUniformLocation(pPhongTexture, "isDirectional"), 4, isDirectional);
+    glUniformMatrix4fv(glGetUniformLocation(pPhongTexture, "project"), 1, GL_TRUE, project.m);
+    glUniform1f(glGetUniformLocation(pPhongTexture, "k_a"), k_a);
+    glUniform1f(glGetUniformLocation(pPhongTexture, "k_d"), k_d);
+    glUniform1f(glGetUniformLocation(pPhongTexture, "k_s"), k_s);
 
-	// pPhongMultiTexture
-	glUseProgram(pPhongMultiTexture);
-	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightPosition"), 4, lightPosition);
-	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightColor"), 4, lightColor);
-	glUniform1iv(glGetUniformLocation(pPhongMultiTexture, "isDirectional"), 4, isDirectional);
-	glUniformMatrix4fv(glGetUniformLocation(pPhongMultiTexture, "project"), 1, GL_TRUE, project.m);
-	glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_a"), k_a);
-	glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_d"), k_d);
-	glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_s"), k_s);
+    // pPhongMultiTexture
+    glUseProgram(pPhongMultiTexture);
+    glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightPosition"), 4, lightPosition);
+    glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "lightColor"), 4, lightColor);
+    glUniform1iv(glGetUniformLocation(pPhongMultiTexture, "isDirectional"), 4, isDirectional);
+    glUniformMatrix4fv(glGetUniformLocation(pPhongMultiTexture, "project"), 1, GL_TRUE, project.m);
+    glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_a"), k_a);
+    glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_d"), k_d);
+    glUniform1f(glGetUniformLocation(pPhongMultiTexture, "k_s"), k_s);
 
-	// pPhongColor
-	glUseProgram(pPhongColor);
-	glUniform3fv(glGetUniformLocation(pPhongColor, "lightPosition"), 4, lightPosition);
-	glUniform3fv(glGetUniformLocation(pPhongColor, "lightColor"), 4, lightColor);
-	glUniform1iv(glGetUniformLocation(pPhongColor, "isDirectional"), 4, isDirectional);
-	glUniformMatrix4fv(glGetUniformLocation(pPhongColor, "project"), 1, GL_TRUE, project.m);
-	glUniform1f(glGetUniformLocation(pPhongColor, "k_a"), k_a);
-	glUniform1f(glGetUniformLocation(pPhongColor, "k_d"), k_d);
-	glUniform1f(glGetUniformLocation(pPhongColor, "k_s"), k_s);
+    // pPhongColor
+    glUseProgram(pPhongColor);
+    glUniform3fv(glGetUniformLocation(pPhongColor, "lightPosition"), 4, lightPosition);
+    glUniform3fv(glGetUniformLocation(pPhongColor, "lightColor"), 4, lightColor);
+    glUniform1iv(glGetUniformLocation(pPhongColor, "isDirectional"), 4, isDirectional);
+    glUniformMatrix4fv(glGetUniformLocation(pPhongColor, "project"), 1, GL_TRUE, project.m);
+    glUniform1f(glGetUniformLocation(pPhongColor, "k_a"), k_a);
+    glUniform1f(glGetUniformLocation(pPhongColor, "k_d"), k_d);
+    glUniform1f(glGetUniformLocation(pPhongColor, "k_s"), k_s);
 
-	printError("init shader");
+    printError("init shader");
 }
 
 void initModels(void)
 {
-	/* Models */
-	wm.blades = LoadModelPlus("models/windmill/blade.obj");
-	wm.walls = LoadModelPlus("models/windmill/windmill-walls.obj");
-	wm.balcony = LoadModelPlus("models/windmill/windmill-balcony.obj");
-	wm.roof = LoadModelPlus("models/windmill/windmill-roof.obj");
-	skybox = LoadModelPlus("models/skybox.obj");
-	cube = LoadModelPlus("models/cubeplus.obj");
-	car = LoadModelPlus("models/bilskiss.obj");
-	/* Init textures */
-	GLuint skyboxTexture;
-	GLuint carTexture;
-	GLuint groundTexture;
-	GLuint dirtTexture;
-	GLuint concreteTexture;
-	// Skybox
-	glActiveTexture(GL_TEXTURE0);
-	LoadTGATextureSimple("textures/SkyBox512.tga", &skyboxTexture);
-	glBindTexture(GL_TEXTURE_2D, skyboxTexture);
-	// Ground
-	glActiveTexture(GL_TEXTURE1);
-	LoadTGATextureSimple("textures/grass.tga", &groundTexture);
-	glBindTexture(GL_TEXTURE_2D, groundTexture);
-	// Car
-	glActiveTexture(GL_TEXTURE2);
-	LoadTGATextureSimple("models/bilskissred.tga", &carTexture);
-	glBindTexture(GL_TEXTURE_2D, carTexture);
-	// Dirt
-	glActiveTexture(GL_TEXTURE3);
-	LoadTGATextureSimple("textures/dirt.tga", &dirtTexture);
-	glBindTexture(GL_TEXTURE_2D, dirtTexture);
-	// Concrete
-	glActiveTexture(GL_TEXTURE4);
-	LoadTGATextureSimple("textures/conc.tga", &concreteTexture);
-	glBindTexture(GL_TEXTURE_2D, concreteTexture);
-	// Done
-	printError("init model");
+    /* Models */
+    wm.blades = LoadModelPlus("models/windmill/blade.obj");
+    wm.walls = LoadModelPlus("models/windmill/windmill-walls.obj");
+    wm.balcony = LoadModelPlus("models/windmill/windmill-balcony.obj");
+    wm.roof = LoadModelPlus("models/windmill/windmill-roof.obj");
+    skybox = LoadModelPlus("models/skybox.obj");
+    cube = LoadModelPlus("models/cubeplus.obj");
+    car = LoadModelPlus("models/bilskiss.obj");
+    /* Init textures */
+    GLuint skyboxTexture;
+    GLuint carTexture;
+    GLuint groundTexture;
+    GLuint dirtTexture;
+    GLuint concreteTexture;
+    // Skybox
+    glActiveTexture(GL_TEXTURE0);
+    LoadTGATextureSimple("textures/SkyBox512.tga", &skyboxTexture);
+    glBindTexture(GL_TEXTURE_2D, skyboxTexture);
+    // Ground
+    glActiveTexture(GL_TEXTURE1);
+    LoadTGATextureSimple("textures/grass.tga", &groundTexture);
+    glBindTexture(GL_TEXTURE_2D, groundTexture);
+    // Car
+    glActiveTexture(GL_TEXTURE2);
+    LoadTGATextureSimple("models/bilskissred.tga", &carTexture);
+    glBindTexture(GL_TEXTURE_2D, carTexture);
+    // Dirt
+    glActiveTexture(GL_TEXTURE3);
+    LoadTGATextureSimple("textures/dirt.tga", &dirtTexture);
+    glBindTexture(GL_TEXTURE_2D, dirtTexture);
+    // Concrete
+    glActiveTexture(GL_TEXTURE4);
+    LoadTGATextureSimple("textures/conc.tga", &concreteTexture);
+    glBindTexture(GL_TEXTURE_2D, concreteTexture);
+    // Done
+    printError("init model");
 }
 
 void init(void)
 {
-	dumpInfo();
-	/* Init gl */
-	glClearColor(0.2, 0.2, 0.5, 0);
-	initShaders();
-	initModels();
-	inputInit();
-	/* Init camera */
-	vec3 camera_pos = {0.0f, 5.0f, -30.0f};
-	vec3 camera_look = {0.0f, 5.0f, 0.0f};
-	vec3 camera_up = {0.0f, 1.0f, 0.0f};
-	cameraInit(camera_pos, camera_look, camera_up);
+    dumpInfo();
+    /* Init gl */
+    glClearColor(0.2, 0.2, 0.5, 0);
+    initShaders();
+    initModels();
+    inputInit();
+    /* Init camera */
+    vec3 camera_pos = {0.0f, 5.0f, -30.0f};
+    vec3 camera_look = {0.0f, 5.0f, 0.0f};
+    vec3 camera_up = {0.0f, 1.0f, 0.0f};
+    cameraInit(camera_pos, camera_look, camera_up);
 }
 
 void display(void)
 {
-	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	printError("display pre");
-	/* Camera */
-	mat4 view = cameraLookAt();
-	/* ----------------------------- *
-	 * Texture shader w/o depth test *
-	 * ----------------------------- */
-	glUseProgram(pTexture);
-	glDisable(GL_DEPTH_TEST);
-	/* Skybox */
-	// Zero the camera translation but keep the rotation
-	mat4 viewSkyBox = view;
-	viewSkyBox.m[3] = 0;
-	viewSkyBox.m[7] = 0;
-	viewSkyBox.m[11] = 0;
-	mat4 model = IdentityMatrix();
-	shaderUpload(pTexture, &model, &viewSkyBox, 0, -1);
-	DrawModel(skybox, pTexture, "inVertex", NULL, "inTexCoord");
-	glEnable(GL_DEPTH_TEST);
-	/* -------------------------- *
-	 * Phong multi texture shader *
-	 * ---------------------------*/
-	glUseProgram(pPhongMultiTexture);
-	glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "cameraPosition"), 1, &camera.pos.x);
-	/* Ground */
-	model = S(100, 0.01, 100);
-	shaderUpload2Textures(pPhongMultiTexture, &model, &view, 1, 3, 2500);
-	DrawModel(cube, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
-	/* Car */
-	float radius = 20;
-	float speed = 0.0015;
-	float c = cos(t * speed);
-	float s = sin(t * speed);
-	model = mult3(
-		T(-radius * c, 0, -radius * s),
-		Ry(-speed * t),
-		S(4, 4, 4));
-	shaderUpload2Textures(pPhongMultiTexture, &model, NULL, 2, 3, 250);
-	DrawModel(car, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
-	/* -------------------- *
-	 * Phong texture shader *
-	 * -------------------- */
-	glUseProgram(pPhongTexture);
-	glUniform3fv(glGetUniformLocation(pPhongTexture, "cameraPosition"), 1, &camera.pos.x);
-	/* ------------------- *
-	 * Phong color shaders *
-	 * ------------------- */
-	glUseProgram(pPhongColor);
-	glUniform3fv(glGetUniformLocation(pPhongColor, "cameraPosition"), 1, &camera.pos.x);
-	/* Windmill */
-	model = Ry(M_PI / 50000 * t);
-	// Windmill base
-	shaderUpload(pPhongColor, &model, &view, -1, 300);
-	DrawModel(wm.walls, pPhongColor, "inVertex", "inNormal", NULL);
-	DrawModel(wm.roof, pPhongColor, "inVertex", "inNormal", NULL);
-	DrawModel(wm.balcony, pPhongColor, "inVertex", "inNormal", NULL);
-	// Windmill blades
-	for (int i = 0; i < 4; ++i)
-	{
-		mat4 model_i = mult3(
-			model,
-			T(4.5f, 9.0f, 0.0f),
-			Rx(i * M_PI / 2 + -M_PI / 2000 * t));
-		shaderUpload(pPhongColor, &model_i, &view, -1, -1);
-		DrawModel(wm.blades, pPhongColor, "inVertex", "inNormal", NULL);
-	}
-	/* Cubes */
-	c = cos(t * 0.001);
-	s = sin(t * 0.001);
-	model = mult3(
-		Ry(M_PI / 3000 * t),
-		Rx(M_PI / 4),
-		Rz(M_PI / 4));
-	mat4 cubeTranslation[4] = {
-		T(-5, 15 + s, 0),
-		T(0, 15 + s, -5),
-		T(0, 15 + s, 5),
-		T(5, 15 + s, 0)};
-	for (int i = 0; i < 4; ++i)
-	{
-		mat4 model_i = mult2(cubeTranslation[i], model);
-		shaderUpload(pPhongColor, &model_i, NULL, -1, 30);
-		DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
-	}
-	model = mult3(T(0, 30 - 5 * c, 0), S(10, 10, 10), model);
-	shaderUpload(pPhongColor, &model, NULL, -1, 10);
-	DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
-	printError("draw models");
-	glutSwapBuffers();
-	printError("display after");
+    GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    printError("display pre");
+    /* Camera */
+    mat4 view = cameraLookAt();
+    /* ----------------------------- *
+     * Texture shader w/o depth test *
+     * ----------------------------- */
+    glUseProgram(pTexture);
+    glDisable(GL_DEPTH_TEST);
+    /* Skybox */
+    // Zero the camera translation but keep the rotation
+    mat4 viewSkyBox = view;
+    viewSkyBox.m[3] = 0;
+    viewSkyBox.m[7] = 0;
+    viewSkyBox.m[11] = 0;
+    mat4 model = IdentityMatrix();
+    shaderUpload(pTexture, &model, &viewSkyBox, 0, -1);
+    DrawModel(skybox, pTexture, "inVertex", NULL, "inTexCoord");
+    glEnable(GL_DEPTH_TEST);
+    /* -------------------------- *
+     * Phong multi texture shader *
+     * ---------------------------*/
+    glUseProgram(pPhongMultiTexture);
+    glUniform3fv(glGetUniformLocation(pPhongMultiTexture, "cameraPosition"), 1, &camera.pos.x);
+    /* Ground */
+    model = S(100, 0.01, 100);
+    shaderUpload2Textures(pPhongMultiTexture, &model, &view, 1, 3, 2500);
+    DrawModel(cube, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
+    /* Car */
+    float radius = 20;
+    float speed = 0.0015;
+    float c = cos(t * speed);
+    float s = sin(t * speed);
+    model = mult3(
+        T(-radius * c, 0, -radius * s),
+        Ry(-speed * t),
+        S(4, 4, 4));
+    shaderUpload2Textures(pPhongMultiTexture, &model, NULL, 2, 3, 250);
+    DrawModel(car, pPhongMultiTexture, "inVertex", "inNormal", "inTexCoord");
+    /* -------------------- *
+     * Phong texture shader *
+     * -------------------- */
+    glUseProgram(pPhongTexture);
+    glUniform3fv(glGetUniformLocation(pPhongTexture, "cameraPosition"), 1, &camera.pos.x);
+    /* ------------------- *
+     * Phong color shaders *
+     * ------------------- */
+    glUseProgram(pPhongColor);
+    glUniform3fv(glGetUniformLocation(pPhongColor, "cameraPosition"), 1, &camera.pos.x);
+    /* Windmill */
+    model = Ry(M_PI / 50000 * t);
+    // Windmill base
+    shaderUpload(pPhongColor, &model, &view, -1, 300);
+    DrawModel(wm.walls, pPhongColor, "inVertex", "inNormal", NULL);
+    DrawModel(wm.roof, pPhongColor, "inVertex", "inNormal", NULL);
+    DrawModel(wm.balcony, pPhongColor, "inVertex", "inNormal", NULL);
+    // Windmill blades
+    for (int i = 0; i < 4; ++i)
+    {
+        mat4 model_i = mult3(
+            model,
+            T(4.5f, 9.0f, 0.0f),
+            Rx(i * M_PI / 2 + -M_PI / 2000 * t));
+        shaderUpload(pPhongColor, &model_i, &view, -1, -1);
+        DrawModel(wm.blades, pPhongColor, "inVertex", "inNormal", NULL);
+    }
+    /* Cubes */
+    c = cos(t * 0.001);
+    s = sin(t * 0.001);
+    model = mult3(
+        Ry(M_PI / 3000 * t),
+        Rx(M_PI / 4),
+        Rz(M_PI / 4));
+    mat4 cubeTranslation[4] = {
+        T(-5, 15 + s, 0),
+        T(0, 15 + s, -5),
+        T(0, 15 + s, 5),
+        T(5, 15 + s, 0)};
+    for (int i = 0; i < 4; ++i)
+    {
+        mat4 model_i = mult2(cubeTranslation[i], model);
+        shaderUpload(pPhongColor, &model_i, NULL, -1, 30);
+        DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
+    }
+    model = mult3(T(0, 30 - 5 * c, 0), S(10, 10, 10), model);
+    shaderUpload(pPhongColor, &model, NULL, -1, 10);
+    DrawModel(cube, pPhongColor, "inVertex", "inNormal", NULL);
+    printError("draw models");
+    glutSwapBuffers();
+    printError("display after");
 }
 
 void onTimer(int value)
 {
-	mouseWarp(100, 100);
-	keyboardHandler();
-	glutPostRedisplay();
-	glutTimerFunc(20, &onTimer, value);
+    mouseWarp(100, 100);
+    keyboardHandler();
+    glutPostRedisplay();
+    glutTimerFunc(20, &onTimer, value);
 }
 
 int main(int argc, char *argv[])
 {
-	glutInit(&argc, argv);
-	glutInitContextVersion(3, 2);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutCreateWindow("Lab 3.5");
-	printError("init glut inits");
-	init();
-	glutTimerFunc(20, &onTimer, 0);
-	glutDisplayFunc(display);
-	glutMainLoop();
-	return 0;
+    glutInit(&argc, argv);
+    glutInitContextVersion(3, 2);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutCreateWindow("Lab 3.5");
+    printError("init glut inits");
+    init();
+    glutTimerFunc(20, &onTimer, 0);
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
 }

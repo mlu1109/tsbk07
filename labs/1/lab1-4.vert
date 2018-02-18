@@ -8,7 +8,7 @@ out vec3 inFragColor;
 
 void main(void)
 {
-	vec4 pos = vec4(inPosition, 1.0);
-	inFragColor = inColor;
-	gl_Position = rotZ * pos;
+    vec4 pos = vec4(inPosition, 1.0);
+    inFragColor = inColor;
+    gl_Position = rotZ * pos;
 }

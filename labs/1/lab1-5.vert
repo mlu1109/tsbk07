@@ -10,7 +10,7 @@ out vec3 inFragColor;
 
 void main(void)
 {
-	vec4 pos = rotX * rotY * rotZ * vec4(inPosition, 1.0);
-	inFragColor = inColor;
-	gl_Position = pos;
+    vec4 pos = rotX * rotY * rotZ * vec4(inPosition, 1.0);
+    inFragColor = inColor;
+    gl_Position = pos;
 }

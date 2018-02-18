@@ -57,4 +57,3 @@ void genTranslate(GLfloat *mat, float x, float y, float z)
     mat[11] = z;
     mat[15] = 1.0f;
 }
-

@@ -7,6 +7,6 @@ out vec3 inFragNormal;
 
 void main(void)
 {
-	inFragNormal = vec3(mat3(transform) * inNormal);
-	gl_Position = transform * vec4(inPosition, 1.0);
+    inFragNormal = vec3(mat3(transform) * inNormal);
+    gl_Position = transform * vec4(inPosition, 1.0);
 }

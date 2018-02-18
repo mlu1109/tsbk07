@@ -9,7 +9,7 @@ out vec3 inFragNormal;
 
 void main(void)
 {
-	mat4 mvp = project * view * transform;
-	inFragNormal = mat3(mvp) * inNormal;
-	gl_Position = mvp * vec4(inPosition, 1.0);
+    mat4 mvp = project * view * transform;
+    inFragNormal = mat3(mvp) * inNormal;
+    gl_Position = mvp * vec4(inPosition, 1.0);
 }
