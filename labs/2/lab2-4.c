@@ -98,7 +98,7 @@ void onTimer(int value)
     // Angular velocity
     // float a_vel = 2 * M_PI / 10000;
     // GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
-    
+
     // Projection
     vec3 camera_pos = {1.0f, 0.0f, 0.0f};
     vec3 camera_look = {0.0f, 0.0f, 0.0f};

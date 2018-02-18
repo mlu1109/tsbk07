@@ -33,11 +33,11 @@ void OnTimer(int value)
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
     float a = M_PI / 5000; // angular velocity
     GLfloat rotZ[16];
-    genRotZ(rotZ, a*t);
+    genRotZ(rotZ, a * t);
     GLfloat rotY[16];
-    genRotY(rotY, a*t);
+    genRotY(rotY, a * t);
     GLfloat rotX[16];
-    genRotX(rotX, a*t);
+    genRotX(rotX, a * t);
 
     glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
     glUniformMatrix4fv(glGetUniformLocation(program, "rotY"), 1, GL_TRUE, rotY);
@@ -78,17 +78,17 @@ void init(void)
 
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER, bunnyVertexBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, m->numVertices*3*sizeof(GLfloat), m->vertexArray, GL_STATIC_DRAW);
-    glVertexAttribPointer(glGetAttribLocation(program, "inPosition"), 3, GL_FLOAT, GL_FALSE, 0, 0); 
+    glBufferData(GL_ARRAY_BUFFER, m->numVertices * 3 * sizeof(GLfloat), m->vertexArray, GL_STATIC_DRAW);
+    glVertexAttribPointer(glGetAttribLocation(program, "inPosition"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition"));
 
     // VBO for normal data
     glBindBuffer(GL_ARRAY_BUFFER, bunnyNormalBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, m->numVertices*3*sizeof(GLfloat), m->normalArray, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m->numVertices * 3 * sizeof(GLfloat), m->normalArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inNormal"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal"));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices * sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
     printError("load models");
 
     // Z-buffer
@@ -103,7 +103,7 @@ void display(void)
     // clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindVertexArray(bunnyVertexArrayObjID);    // Select VAO
+    glBindVertexArray(bunnyVertexArrayObjID); // Select VAO
     glDrawElements(GL_TRIANGLES, m->numIndices, GL_UNSIGNED_INT, 0L);
 
     printError("display");

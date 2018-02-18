@@ -9,4 +9,3 @@ mat4 mult3(mat4 a, mat4 b, mat4 c);
 mat4 mult4(mat4 a, mat4 b, mat4 c, mat4 d);
 
 #endif
-

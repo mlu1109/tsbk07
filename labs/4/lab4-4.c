@@ -36,7 +36,7 @@ GLuint pTerrain;
 GLuint pPhong;
 
 // HeightMap
-TextureData ttex; 
+TextureData ttex;
 
 void initShaders(void)
 {
@@ -51,7 +51,7 @@ void initShaders(void)
         10.0f, 5.0f, 0.0f, // 1
         0.0f, 5.0f, 10.0f, // 2
         -1.0f, 0.0f, 0.0f, // 3
-        1.0f, 1.0f, 1.0f  // 4
+        1.0f, 1.0f, 1.0f   // 4
     };
     GLfloat lightColor[] = {
         //0.0f, 0.0f, 0.0f,
@@ -82,7 +82,7 @@ void initShaders(void)
     glUniform1f(glGetUniformLocation(pTerrain, "k_a"), k_a);
     glUniform1f(glGetUniformLocation(pTerrain, "k_d"), k_d);
     glUniform1f(glGetUniformLocation(pTerrain, "k_s"), k_s);
-    
+
     GLuint terrainTexture;
     LoadTGATextureSimple(terrainTexturePath, &terrainTexture);
     glActiveTexture(GL_TEXTURE_2D);
@@ -145,13 +145,13 @@ void display(void)
     glUseProgram(pTerrain);
     // Terrain
     mat4 model = IdentityMatrix();
-    shaderUpload(pTerrain, &model, &view, &camera.pos, -1, 10);	
+    shaderUpload(pTerrain, &model, &view, &camera.pos, -1, 10);
     DrawModel(terrain, pTerrain, "inVertex", "inNormal", "inTexCoord");
     printError("display 2");
 
     /* ------------- *
      * pPhong shader *
-     * ------------- */ 
+     * ------------- */
     glUseProgram(pPhong);
     // Ground Sphere
     model = objectGetModelMatrix(&groundSphere);

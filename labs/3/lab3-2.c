@@ -70,8 +70,7 @@ void display(void)
     // Windmill
     mat4 model = mult2(
         Ry(M_PI / 10000 * t),
-        T(0, -7, 0)
-    );
+        T(0, -7, 0));
     // Windmill base
     glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.m);
     DrawModel(wm.walls, program, "inVertex", "inNormal", NULL);

@@ -32,7 +32,7 @@ void OnTimer(int value)
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
     float a = 2 * M_PI / 2000;
     GLfloat rotZ[16];
-    genRotZ(rotZ, a*t);
+    genRotZ(rotZ, a * t);
     glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
     glutPostRedisplay();
     glutTimerFunc(20, &OnTimer, value);
@@ -42,7 +42,7 @@ void init(void)
 {
     // vertex buffer object, used for uploading the geometry
     unsigned int vertexBufferObjID[2];
-    
+
     dumpInfo();
 
     // GL inits
@@ -57,7 +57,7 @@ void init(void)
     // Allocate and activate VAO
     glGenVertexArrays(1, &vertexArrayObjID);
     glBindVertexArray(vertexArrayObjID);
-    
+
     // Allocate VBOs
     glGenBuffers(2, vertexBufferObjID);
 
@@ -86,7 +86,7 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(vertexArrayObjID); // Select VAO
-    glDrawArrays(GL_TRIANGLES, 0, 3);	// draw object
+    glDrawArrays(GL_TRIANGLES, 0, 3);    // draw object
 
     printError("display");
 

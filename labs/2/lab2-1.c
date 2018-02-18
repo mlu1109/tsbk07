@@ -104,12 +104,12 @@ void onTimer(int value)
     // Create rotation matrices
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
     GLfloat rotX[16];
-    genRotX(rotX, a_vel*t);
+    genRotX(rotX, a_vel * t);
     GLfloat rotY[16];
-    genRotY(rotY, a_vel*t);
+    genRotY(rotY, a_vel * t);
     GLfloat rotZ[16];
-    genRotZ(rotZ, a_vel*t);
-    
+    genRotZ(rotZ, a_vel * t);
+
     // Upload
     glUniform1f(glGetUniformLocation(program, "inTimeStamp"), t);
     glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
@@ -121,7 +121,7 @@ void onTimer(int value)
     glutPostRedisplay();
 
     // Set timer
-    glutTimerFunc(20, &onTimer, value);	
+    glutTimerFunc(20, &onTimer, value);
 }
 
 int main(int argc, char *argv[])
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     glutInit(&argc, argv);
     glutInitContextVersion(3, 2);
     glutCreateWindow("Lab 2.1");
-    glutTimerFunc(20, &onTimer, 0);	
+    glutTimerFunc(20, &onTimer, 0);
     glutDisplayFunc(display);
     init();
     glutMainLoop();

@@ -40,10 +40,10 @@ void init(void)
 void display(void)
 {
     printError("display pre");
-    
+
     // Clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     // View
     float a_vel = M_PI / 2500;
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
@@ -53,7 +53,7 @@ void display(void)
     vec3 camera_look = {0.0f, 0.0f, -5.0f};
     vec3 camera_up = {0.0f, 1.0f, 0.0f};
     mat4 view = lookAtv(camera_pos, camera_look, camera_up);
-    
+
     // Projection
     GLfloat project[16];
     float near = 1.0f;
@@ -63,24 +63,24 @@ void display(void)
     float top = 0.5f;
     float bottom = -0.5f;
     genProj(project, near, far, right, left, top, bottom);
-    
+
     // Transformations
     mat4 transform[2];
     transform[0] = T(-1.0f, 0.0f, -5.0f);
     transform[1] = Mult(T(1.0f, 0.0f, -5.0f), Ry(M_PI));
-    
+
     // Shared
     glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.m);
     glUniformMatrix4fv(glGetUniformLocation(program, "project"), 1, GL_TRUE, project);
-    
+
     // Model 0
     glUniformMatrix4fv(glGetUniformLocation(program, "transform"), 1, GL_TRUE, transform[0].m);
     DrawModel(m[0], program, "inPosition", "inNormal", NULL);
-    
+
     // Model 1
     glUniformMatrix4fv(glGetUniformLocation(program, "transform"), 1, GL_TRUE, transform[1].m);
     DrawModel(m[1], program, "inPosition", "inNormal", NULL);
-    
+
     // Done
     printError("display upload");
     glFinish();

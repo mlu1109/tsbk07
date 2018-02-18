@@ -79,7 +79,7 @@ void display(void)
     // Draw VAO
     glBindVertexArray(vertexArrayObjID);
     glDrawElements(GL_TRIANGLES, m->numIndices, GL_UNSIGNED_INT, 0L);
-    
+
     glFinish();
     //glutSwapBuffers();
     printError("display after");
@@ -90,7 +90,7 @@ void onTimer(int value)
     // Angular velocity
     float a_vel = M_PI / 5000;
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
-    
+
     // Projection
     vec3 camera_pos = {1.0f, 0.0f, 0.0f};
     vec3 camera_look = {0.0f, 0.0f, 0.0f};
@@ -98,7 +98,7 @@ void onTimer(int value)
     mat4 project = lookAtv(camera_pos, camera_look, camera_up);
 
     // Apply rotations/translations
-    mat4 transform = Ry(a_vel*t);
+    mat4 transform = Ry(a_vel * t);
 
     // Upload
     glUniformMatrix4fv(glGetUniformLocation(program, "transform"), 1, GL_TRUE, transform.m);

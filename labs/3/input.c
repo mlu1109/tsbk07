@@ -11,7 +11,7 @@ struct Mouse
     float sens;
     int lastX;
     int lastY;
-} mouse; 
+} mouse;
 
 void mouseWarp(int x, int y)
 {
@@ -38,7 +38,7 @@ void mouseMotionFunc(int x, int y)
     }
     else
     {
-        cameraRotate(dx, dy,mouse.sens);
+        cameraRotate(dx, dy, mouse.sens);
     }
 }
 

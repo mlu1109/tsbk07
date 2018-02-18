@@ -13,7 +13,6 @@
 // Own
 #include "transform.h"
 
-
 // Globals
 // Data would normally be read from files
 GLfloat vertices[] = {-0.5f, -0.5f, 0.0f,
@@ -30,7 +29,7 @@ void OnTimer(int value)
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
     float a = 2 * M_PI / 2000;
     GLfloat rotZ[16];
-    genRotZ(rotZ, a*t);
+    genRotZ(rotZ, a * t);
     glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
     glutPostRedisplay();
     glutTimerFunc(20, &OnTimer, value);
@@ -79,7 +78,7 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(vertexArrayObjID); // Select VAO
-    glDrawArrays(GL_TRIANGLES, 0, 3);	// draw object
+    glDrawArrays(GL_TRIANGLES, 0, 3);    // draw object
 
     printError("display");
 

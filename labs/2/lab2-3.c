@@ -110,7 +110,7 @@ void onTimer(int value)
 
     // Apply rotations/translations
     mat4 transform = Mult(T(0, 0, -5.0f), Ry(a_vel * t));
-    
+
     // Upload
     //glUniform1f(glGetUniformLocation(program, "inTimeStamp"), t);
     glUniformMatrix4fv(glGetUniformLocation(program, "transform"), 1, GL_TRUE, transform.m);

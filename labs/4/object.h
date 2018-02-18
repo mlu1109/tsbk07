@@ -5,12 +5,13 @@
 #include "loadobj.h"
 #include <stdbool.h>
 
-typedef struct {
+typedef struct
+{
     Model *model;
     vec3 position;
     vec3 scale;
     vec3 rotation;
-    vec3 direction; 
+    vec3 direction;
 } Object;
 
 mat4 objectGetModelMatrix(const Object *o);

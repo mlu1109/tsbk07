@@ -204,8 +204,8 @@ void display(void)
 
     for (int i = 0; i < numObjects; ++i)
     {
-        color = Normalize((vec3) {i % 3, (i + 1) % 3, (i + 2) % 3});
-    glUniform3fv(glGetUniformLocation(pPhong, "color"), 1, &color.x);
+        color = Normalize((vec3){i % 3, (i + 1) % 3, (i + 2) % 3});
+        glUniform3fv(glGetUniformLocation(pPhong, "color"), 1, &color.x);
 
         model = objectGetModelMatrix(&objects[i]);
         shaderUpload(pPhong, &model, NULL, NULL, 1, 500);

@@ -24,7 +24,7 @@ GLfloat vertices[] = {
     0.5f, -0.5f, 0.5f,
     0.5f, 0.5f, 0.5f,
     -0.5f, 0.5f, 0.5f,
-    
+
     // z = -0.5
     -0.5f, 0.5f, -0.5f,
     -0.5f, -0.5f, -0.5f,
@@ -37,7 +37,7 @@ GLfloat vertices[] = {
     // y = 0.5
     -0.5f, 0.5f, 0.5f,
     -0.5f, 0.5f, -0.5f,
-    0.5f,  0.5f, -0.5f,
+    0.5f, 0.5f, -0.5f,
 
     0.5f, 0.5f, -0.5f,
     0.5f, 0.5f, 0.5f,
@@ -46,7 +46,7 @@ GLfloat vertices[] = {
     // y = -0.5
     -0.5f, -0.5f, 0.5f,
     -0.5f, -0.5f, -0.5f,
-    0.5f,  -0.5f, -0.5f,
+    0.5f, -0.5f, -0.5f,
 
     0.5f, -0.5f, -0.5f,
     0.5f, -0.5f, 0.5f,
@@ -55,7 +55,7 @@ GLfloat vertices[] = {
     // x = 0.5
     0.5f, -0.5f, 0.5f,
     0.5f, -0.5f, -0.5f,
-    0.5f, 0.5f,  -0.5f,
+    0.5f, 0.5f, -0.5f,
 
     0.5f, 0.5f, -0.5f,
     0.5f, 0.5f, 0.5f,
@@ -64,12 +64,11 @@ GLfloat vertices[] = {
     // x = -0.5
     -0.5f, -0.5f, 0.5f,
     -0.5f, -0.5f, -0.5f,
-    -0.5f, 0.5f,  -0.5f,
+    -0.5f, 0.5f, -0.5f,
 
     -0.5f, 0.5f, -0.5f,
     -0.5f, 0.5f, 0.5f,
-    -0.5f, -0.5f, 0.5f,
-};
+    -0.5f, -0.5f, 0.5f};
 
 GLfloat colors[] = {
     1.0f, 0.0f, 0.0f,
@@ -79,47 +78,46 @@ GLfloat colors[] = {
     0.0f, 0.0f, 1.0f,
     0.0f, 1.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
-                    
+
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
-                    
+
     0.0f, 0.0f, 1.0f,
     0.0f, 1.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
-                    
+
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
-                    
+
     0.0f, 0.0f, 1.0f,
     0.0f, 1.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
-                    
+
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
-                    
+
     0.0f, 0.0f, 1.0f,
     0.0f, 1.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
-                    
+
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
-                    
+
     0.0f, 0.0f, 1.0f,
     0.0f, 1.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
-                    
+
     0.0f, 0.0f, 1.0f,
     0.0f, 1.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
-                    
+
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f,
-};
+    0.0f, 0.0f, 1.0f};
 
 // vertex array object
 unsigned int vertexArrayObjID;
@@ -131,17 +129,17 @@ void OnTimer(int value)
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
     float a = M_PI / 5000; // angular velocity
     GLfloat rotZ[16];
-    genRotZ(rotZ, a*t);
+    genRotZ(rotZ, a * t);
     GLfloat rotY[16];
-    genRotY(rotY, a*t);
+    genRotY(rotY, a * t);
     GLfloat rotX[16];
-    genRotX(rotX, a*t);
+    genRotX(rotX, a * t);
 
     glUniformMatrix4fv(glGetUniformLocation(program, "rotZ"), 1, GL_TRUE, rotZ);
     glUniformMatrix4fv(glGetUniformLocation(program, "rotY"), 1, GL_TRUE, rotY);
     glUniformMatrix4fv(glGetUniformLocation(program, "rotX"), 1, GL_TRUE, rotX);
     printError("ontimer upload");
-    
+
     glutPostRedisplay();
     glutTimerFunc(20, &OnTimer, value);
 }
@@ -182,10 +180,10 @@ void init(void)
     glBufferData(GL_ARRAY_BUFFER, 12 * 9 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inColor"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inColor"));
-    
+
     // Z-buffer
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    
+
     printError("init arrays");
 }
 
@@ -196,8 +194,8 @@ void display(void)
     // clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindVertexArray(vertexArrayObjID); // Select VAO
-    glDrawArrays(GL_TRIANGLES, 0, 3 * 12);	// draw object
+    glBindVertexArray(vertexArrayObjID);   // Select VAO
+    glDrawArrays(GL_TRIANGLES, 0, 3 * 12); // draw object
 
     printError("display");
 
