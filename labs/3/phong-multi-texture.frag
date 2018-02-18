@@ -47,8 +47,6 @@ void main(void)
 		specular += k_s * lightColor[i] * pow(cos_theta_s, a);
 	}
 	
-	vec3 color = vec3(0, 0, 0);
-	//vec4 tex = min(texture(texUnit, texCoord), texture(texUnit2, texCoord));
 	vec4 tex = cos(texCoord.s) * texture(texUnit, texCoord) + 0.5 * sin(texCoord.s) * texture(texUnit2, texCoord);
 	outColor = (vec4(ambient, 1.0) + vec4(diffuse, 1.0)) * tex + vec4(specular, 1.0);
 }
