@@ -1,5 +1,21 @@
 #include "shaders.h"
 
+void shaderLight(GLuint program, GLfloat *lightPosition, GLfloat *lightColor, GLint *isDirectional, const GLfloat *k_a, const GLfloat *k_d, const GLfloat *k_s)
+{
+    if (lightPosition != NULL)
+        glUniform3fv(glGetUniformLocation(program, "lightPosition"), 4, lightPosition);
+    if (lightColor != NULL)
+        glUniform3fv(glGetUniformLocation(program, "lightColor"), 4, lightColor);
+    if (isDirectional != NULL)
+        glUniform1iv(glGetUniformLocation(program, "isDirectional"), 4, isDirectional);
+    if (k_a != NULL)
+        glUniform1f(glGetUniformLocation(program, "k_a"), *k_a);
+    if (k_d != NULL)
+        glUniform1f(glGetUniformLocation(program, "k_d"), *k_d);
+    if (k_s != NULL)
+        glUniform1f(glGetUniformLocation(program, "k_s"), *k_s);
+}
+
 void shaderUpload(GLuint program, mat4 *model, mat4 *view, vec3 *cameraPosition, GLuint texUnit, GLfloat specularExponent)
 {
     if (model != NULL)

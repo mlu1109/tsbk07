@@ -15,9 +15,9 @@ uniform mat4 project;
 
 void main(void)
 {
-	normal = mat3(model) * inNormal;
-	vertex = vec3(model * vec4(inVertex, 1.0));
-	texCoord = inTexCoord;
-	
-	gl_Position = project * view * model * vec4(inVertex, 1.0);
+    normal = mat3(model) * inNormal;
+    vertex = vec3(model * vec4(inVertex, 1.0));
+    texCoord = inTexCoord;
+    
+    gl_Position = project * view * model * vec4(inVertex, 1.0);
 }

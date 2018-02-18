@@ -92,7 +92,7 @@ float calcY(GLfloat *arr, int p_x, int p_z, int qPxWidth, int qPxHeight, int wid
         v3 = fromVertexArray(arr, q_x + 1, q_z, width);
     else
         v3 = fromVertexArray(arr, q_x, q_z + 1, width);
-    
+
     // Calculate normal
     vec3 n = Normalize(CrossProduct(VectorSub(v1, v2), VectorSub(v1, v3)));
     if (n.y < 0) // Flip the normal if it points downwards
@@ -109,67 +109,67 @@ float calcY(GLfloat *arr, int p_x, int p_z, int qPxWidth, int qPxHeight, int wid
 
 Model *generateTerrain(TextureData *tex, int quadWidth, int quadHeight)
 {
-	int vertexCount = tex->width * tex->height;
+    int vertexCount = tex->width * tex->height;
     int triangleCount = (tex->width - 1) * (tex->height - 1) * 2;
-	int x, z;
+    int x, z;
 
-	GLfloat *vertexArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
-	GLfloat *normalArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
-	GLfloat *texCoordArray = malloc(sizeof(GLfloat) * 2 * vertexCount);
-	GLuint *indexArray = malloc(sizeof(GLuint) * triangleCount * 3);
-	
+    GLfloat *vertexArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
+    GLfloat *normalArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
+    GLfloat *texCoordArray = malloc(sizeof(GLfloat) * 2 * vertexCount);
+    GLuint *indexArray = malloc(sizeof(GLuint) * triangleCount * 3);
+
     printf("bpp %d\n", tex->bpp);
 
     // Vertices and tex coords
-	for (x = 0; x < tex->width; x++)
-	{
-		for (z = 0; z < tex->height; z++)
-		{
-			// Vertices, scalable
-			vertexArray[(x + z * tex->width) * 3 + 0] = quadWidth * x / 1.0;
-			vertexArray[(x + z * tex->width) * 3 + 1] = tex->imageData[(x + z * tex->width) * (tex->bpp / 8)] / 7.0;
-			vertexArray[(x + z * tex->width) * 3 + 2] = quadHeight * z / 1.0;
+    for (x = 0; x < tex->width; x++)
+    {
+        for (z = 0; z < tex->height; z++)
+        {
+            // Vertices, scalable
+            vertexArray[(x + z * tex->width) * 3 + 0] = quadWidth * x;
+            vertexArray[(x + z * tex->width) * 3 + 1] = tex->imageData[(x + z * tex->width) * (tex->bpp / 8)] * quadWidth / 7.0;
+            vertexArray[(x + z * tex->width) * 3 + 2] = quadHeight * z;
 
-			// Tex coords, scalable
-			texCoordArray[(x + z * tex->width) * 2 + 0] = (float)x / tex->width;
-			texCoordArray[(x + z * tex->width) * 2 + 1] = (float)z / tex->height;
-		}
-	}
+            // Tex coords, scalable
+            texCoordArray[(x + z * tex->width) * 2 + 0] = (float)x / tex->width;
+            texCoordArray[(x + z * tex->width) * 2 + 1] = (float)z / tex->height;
+        }
+    }
     // Normals
-	for (x = 0; x < tex->width; x++)
-	{
-		for (z = 0; z < tex->height; z++)
-		{
-			vec3 n = calcVertexNormalSimple(vertexArray, x, z, tex->width, tex->height);
-			normalArray[(x + z * tex->width) * 3 + 0] = n.x;
-			normalArray[(x + z * tex->width) * 3 + 1] = n.y;
-			normalArray[(x + z * tex->width) * 3 + 2] = n.z;
-		}
-	}
+    for (x = 0; x < tex->width; x++)
+    {
+        for (z = 0; z < tex->height; z++)
+        {
+            vec3 n = calcVertexNormalSimple(vertexArray, x, z, tex->width, tex->height);
+            normalArray[(x + z * tex->width) * 3 + 0] = n.x;
+            normalArray[(x + z * tex->width) * 3 + 1] = n.y;
+            normalArray[(x + z * tex->width) * 3 + 2] = n.z;
+        }
+    }
     // Indices
-	for (x = 0; x < tex->width - 1; x++)
-	{
-		for (z = 0; z < tex->height - 1; z++)
-		{
-			// Triangle 1
-			indexArray[(x + z * (tex->width - 1)) * 6 + 0] = x + z * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 1] = x + (z + 1) * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 2] = x + 1 + z * tex->width;
-			// Triangle 2
-			indexArray[(x + z * (tex->width - 1)) * 6 + 3] = x + 1 + z * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 4] = x + (z + 1) * tex->width;
-			indexArray[(x + z * (tex->width - 1)) * 6 + 5] = x + 1 + (z + 1) * tex->width;
-		}
-	}
+    for (x = 0; x < tex->width - 1; x++)
+    {
+        for (z = 0; z < tex->height - 1; z++)
+        {
+            // Triangle 1
+            indexArray[(x + z * (tex->width - 1)) * 6 + 0] = x + z * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 1] = x + (z + 1) * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 2] = x + 1 + z * tex->width;
+            // Triangle 2
+            indexArray[(x + z * (tex->width - 1)) * 6 + 3] = x + 1 + z * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 4] = x + (z + 1) * tex->width;
+            indexArray[(x + z * (tex->width - 1)) * 6 + 5] = x + 1 + (z + 1) * tex->width;
+        }
+    }
 
-	Model *terrain = LoadDataToModel(
-		vertexArray,
-		normalArray,
-		texCoordArray,
-		NULL,
-		indexArray,
-		vertexCount,
-		triangleCount * 3);
+    Model *terrain = LoadDataToModel(
+        vertexArray,
+        normalArray,
+        texCoordArray,
+        NULL,
+        indexArray,
+        vertexCount,
+        triangleCount * 3);
 
-	return terrain;
+    return terrain;
 }
