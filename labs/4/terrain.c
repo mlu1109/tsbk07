@@ -1,5 +1,4 @@
 #include "terrain.h"
-#include "VectorUtils3.h"
 
 vec3 fromVertexArray(GLfloat *arr, int x, int z, int width)
 {
@@ -11,57 +10,30 @@ vec3 fromVertexArray(GLfloat *arr, int x, int z, int width)
 
 vec3 calcVertexNormalSimple(GLfloat *arr, int x, int z, int width, int height)
 {
-    vec3 v1 = {-1, -1, -1};
-    vec3 v2 = {0, 0, 0};
-    vec3 v3 = {0, 0, 0};
-    // Edge cases (no further thought gone into handling these)
+    vec3 v1;
+    vec3 v2;
+    vec3 v3;
     if (x == 0)
-    {
-        v1 = fromVertexArray(arr, x, z, width);
-        if (z == 0)
-        {
-            v2 = fromVertexArray(arr, x + 0, z + 1, width);
-            v3 = fromVertexArray(arr, x + 1, z + 0, width);
-        }
-        else
-        {
-            v2 = fromVertexArray(arr, x + 0, z - 1, width);
-            v3 = fromVertexArray(arr, x + 1, z - 0, width);
-        }
-    }
-    else if (x == width - 1)
-    {
-        v1 = fromVertexArray(arr, x, z, width);
-        if (z == 0)
-        {
-            v2 = fromVertexArray(arr, x - 0, z + 1, width);
-            v3 = fromVertexArray(arr, x - 1, z + 0, width);
-        }
-        else
-        {
-            v2 = fromVertexArray(arr, x - 0, z - 1, width);
-            v3 = fromVertexArray(arr, x - 1, z - 0, width);
-        }
-    }
-    else if (z == 0)
-    {
-        v1 = fromVertexArray(arr, x + 1, z + 0, width);
-        v2 = fromVertexArray(arr, x - 1, z + 1, width);
-        v3 = fromVertexArray(arr, x + 0, z + 1, width);
-    }
-    else if (z == height - 1)
-    {
-        v1 = fromVertexArray(arr, x + 1, z + 0, width);
-        v2 = fromVertexArray(arr, x - 1, z - 1, width);
-        v3 = fromVertexArray(arr, x + 0, z - 1, width);
-    }
-    // Not edge case
+        v1 = fromVertexArray(arr, x - 0, z, width);
     else
-    {
-        v1 = fromVertexArray(arr, x + 1, z - 1, width);
-        v2 = fromVertexArray(arr, x - 1, z + 1, width);
-        v3 = fromVertexArray(arr, x + 1, z + 1, width);
-    }
+        v1 = fromVertexArray(arr, x - 1, z, width);
+
+    if (z == height - 1)
+        v2 = fromVertexArray(arr, x, z + 0, width);
+    else
+        v2 = fromVertexArray(arr, x, z + 1, width);
+
+    if (z == 0)
+        if (x == width - 1)
+            v3 = fromVertexArray(arr, x + 0, z - 0, width);
+        else
+            v3 = fromVertexArray(arr, x + 1, z - 0, width);
+    else
+        if (x == width - 1)
+            v3 = fromVertexArray(arr, x + 0, z - 1, width);
+        else
+            v3 = fromVertexArray(arr, x + 1, z - 1, width);
+
     // The vertex normal is the normal of the triangle formed by its surrounding neighbours
     vec3 e1 = VectorSub(v1, v3);
     vec3 e2 = VectorSub(v1, v2);

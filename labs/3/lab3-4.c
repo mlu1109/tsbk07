@@ -13,9 +13,9 @@
 #include "input.h"
 #include "shaders.h"
 
-const float k_a = 0.1;
+const float k_a = 0.05;
 const float k_s = 1.0;
-const float k_d = 0.6;
+const float k_d = 0.3;
 
 GLuint pPhongColor;
 GLuint pTexture;

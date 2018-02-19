@@ -128,6 +128,7 @@ void init(void)
         "models/groundsphere.obj",
         NULL,
         NULL,
+        NULL,
         NULL);
 }
 

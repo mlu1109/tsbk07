@@ -8,5 +8,5 @@ out vec4 outColor;
 
 void main(void)
 {
-    outColor = texture(texUnit, inFragTexCoord);
+    outColor = texture(texUnit, inFragTexCoord*10);
 }

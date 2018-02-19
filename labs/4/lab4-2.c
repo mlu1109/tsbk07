@@ -12,6 +12,7 @@
 #include "algebra.h"
 #include "camera.h"
 #include "input.h"
+#include "shaders.h"
 mat4 projectionMatrix;
 
 Model *GenerateTerrain(TextureData *tex)
@@ -32,7 +33,7 @@ Model *GenerateTerrain(TextureData *tex)
         {
             // Vertex array. You need to scale this properly
             vertexArray[(x + z * tex->width) * 3 + 0] = x / 1.0;
-            vertexArray[(x + z * tex->width) * 3 + 1] = tex->imageData[(x + z * tex->width) * (tex->bpp / 8)] / 100.0;
+            vertexArray[(x + z * tex->width) * 3 + 1] = tex->imageData[(x + z * tex->width) * (tex->bpp / 8)] / 8.0;
             vertexArray[(x + z * tex->width) * 3 + 2] = z / 1.0;
             // Normal vectors. You need to calculate these.
             normalArray[(x + z * tex->width) * 3 + 0] = 0.0;
@@ -98,11 +99,11 @@ void init(void)
     projectionMatrix = frustum(-0.1, 0.1, -0.1, 0.1, 0.2, 300.0);
 
     // Load and compile shader
-    program = loadShaders("4/terrain.vert", "4/terrain.frag");
+    program = loadShaders("4/texture.vert", "4/texture.frag");
     glUseProgram(program);
     printError("init shader");
 
-    glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projectionMatrix.m);
+    glUniformMatrix4fv(glGetUniformLocation(program, "project"), 1, GL_TRUE, projectionMatrix.m);
     glUniform1i(glGetUniformLocation(program, "tex"), 0); // Texture unit 0
     LoadTGATextureSimple("textures/maskros512.tga", &tex1);
 
@@ -118,7 +119,7 @@ void display(void)
     // clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    mat4 total, modelView, camMatrix;
+    mat4 modelView, camMatrix;
 
     printError("pre display");
 
@@ -127,11 +128,9 @@ void display(void)
     // Build matrix
     camMatrix = cameraLookAt();
     modelView = IdentityMatrix();
-    total = Mult(camMatrix, modelView);
-    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
-
+    shaderUpload(program, &modelView, &camMatrix, NULL, 0, -1);
     glBindTexture(GL_TEXTURE_2D, tex1); // Bind Our Texture tex1
-    DrawModel(tm, program, "inPosition", NULL, "inTexCoord");
+    DrawModel(tm, program, "inVertex", NULL, "inTexCoord");
 
     printError("display 2");
 
