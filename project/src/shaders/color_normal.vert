@@ -9,5 +9,5 @@ uniform mat3 nmvp;
 void main(void)
 {
     normal = nmvp * inNormal;
-	gl_Position = mvp * vec4(inVertex, 1.0);
+    gl_Position = mvp * vec4(inVertex, 1.0);
 }
