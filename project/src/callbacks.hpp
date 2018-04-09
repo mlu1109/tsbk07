@@ -6,6 +6,6 @@
 #include "renderer.hpp"
 #include "mouse.hpp"
 
-void initCallbacks(GLFWwindow *window, Mouse *mouse);
+void initCallbacks(GLFWwindow *window, Mouse *mouse, Camera *camera);
 
 #endif

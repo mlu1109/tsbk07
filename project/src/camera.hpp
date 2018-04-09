@@ -16,7 +16,7 @@ class Camera
     float m_far = 100.0f;
 
     glm::mat4 m_viewToScreen;
-    
+
   public:
     Camera(const glm::vec3 &position, const glm::vec3 &look, const glm::vec3 &up);
     void position(const glm::vec3 &position);
@@ -32,6 +32,8 @@ class Camera
     glm::mat4 worldToView() const;
     glm::mat4 worldToViewToScreen() const;
 
+    void updateAspect(int windowWidth, int windowHeight); 
+    
     friend std::ostream &operator<<(std::ostream &os, const Camera &c);
 };
 

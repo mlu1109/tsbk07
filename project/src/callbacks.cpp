@@ -1,6 +1,7 @@
 #include "callbacks.hpp"
 
 Mouse *g_mouse;
+Camera *g_camera;
 
 /* Errors */
 
@@ -11,12 +12,11 @@ void errorCallback(int, const char *description)
 
 /* Window */
 
-/*
-void windowResizeCallback(GLFWwindow *window, int width, int height)
+void windowResizeCallback(GLFWwindow *, int width, int height)
 {
-
+    glViewport(0, 0, width, height);
+    g_camera->updateAspect(width, height);
 }
-*/
 
 /* Cursor/Mouse */
 
@@ -46,13 +46,14 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int /* mods
 
 /* Init */
 
-void initCallbacks(GLFWwindow *window, Mouse *mouse)
+void initCallbacks(GLFWwindow *window, Mouse *mouse, Camera *camera)
 {
     g_mouse = mouse;
+    g_camera = camera;
     /* Error */
     glfwSetErrorCallback(errorCallback);
     /* Window */
-    //glfwSetWindowSizeCallback(window, windowResizeCallback);
+    glfwSetWindowSizeCallback(window, windowResizeCallback);
     /* Cursor/Mouse */
     //glfwSetCursorEnterCallback(g_window, cursorEnterCallback);
     glfwSetCursorPosCallback(window, cursorPositionCallback);

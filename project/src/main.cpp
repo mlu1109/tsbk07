@@ -65,7 +65,7 @@ int main()
     models.push_back(model);
 
     Mouse mouse(&camera);
-    initCallbacks(window, &mouse);
+    initCallbacks(window, &mouse, &camera);
 
     while (!glfwWindowShouldClose(window))
     {

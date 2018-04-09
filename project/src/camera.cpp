@@ -74,6 +74,12 @@ glm::mat4 Camera::worldToViewToScreen() const
     return m_viewToScreen * glm::lookAt(m_position, m_look, m_up);
 }
 
+void Camera::updateAspect(int width, int height)
+{
+    m_aspect = static_cast<float>(width) / static_cast<float>(height);
+    m_viewToScreen = glm::perspective(m_fovy, m_aspect, m_near, m_far);
+}
+
 std::ostream& operator<<(std::ostream &os, const Camera &c)
 {
     os << "Camera: " << "[P: " << c.m_position << ", L: " << c.m_look << ", U: " << c.m_up << "]";
